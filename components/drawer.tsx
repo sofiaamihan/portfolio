@@ -6,7 +6,7 @@ const DrawerObject = createDrawerNavigator();
 export function Drawer() {
   return (
     <DrawerObject.Navigator>
-      <DrawerObject.Screen name="Home" component={Index} />
+      <DrawerObject.Screen name="Index" component={Index} />
     </DrawerObject.Navigator>
   );
 }
