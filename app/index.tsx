@@ -1,7 +1,13 @@
 // import { Button } from "@react-navigation/elements";
+import { About } from "@/components/about";
+import { ContactMe } from "@/components/contact-me";
+import { Education } from "@/components/education";
+import { Experiences } from "@/components/experiences";
+import { Home } from "@/components/home";
+import { Projects } from "@/components/projects";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -23,6 +29,9 @@ const isDesktop = isWeb && width >= 768;
 const HEADER_HEIGHT = isDesktop ? 80 : 60;
 const FOOTER_HEIGHT = isDesktop ? 40 : 40;
 const SIDE_WIDTH = isDesktop ? 200 : 0; // This does NOT make it disappear lols
+const getContentHeight = () => {
+  return Dimensions.get("window").height - HEADER_HEIGHT - FOOTER_HEIGHT;
+};
 
 const LIGHTEST = "#f7f1de";
 const DARKEST = "#6c5946";
@@ -49,73 +58,47 @@ const SideNavigationButton: React.FC<SideNavigationButtonProps> = ({
 const DATA = [
   {
     title: "Home",
-    data: ["Pizza", "Burger", "Risotto"],
+    data: [{ component: Home }],
   },
   {
     title: "About",
-    data: ["French Fries", "Onion Rings", "Fried Shrimps"],
+    data: [{ component: About }],
   },
   {
     title: "Projects",
-    data: ["Water", "Coke", "Beer"],
+    data: [{ component: Projects }],
   },
   {
     title: "Education",
-    data: ["Cheese Cake", "Ice Cream"],
+    data: [{ component: Education }],
   },
   {
     title: "Experiences",
-    data: ["Cheese Cake", "Ice Cream"],
+    data: [{ component: Experiences }],
   },
   {
     title: "Contact Me",
-    data: ["Cheese Cake", "Ice Cream"],
-  },
-  {
-    title: "Contact Me",
-    data: ["Cheese Cake", "Ice Cream"],
-  },
-  {
-    title: "Contact Me",
-    data: ["Cheese Cake", "Ice Cream"],
-  },
-  {
-    title: "Contact Me",
-    data: ["Cheese Cake", "Ice Cream"],
-  },
-  {
-    title: "Contact Me",
-    data: ["Cheese Cake", "Ice Cream"],
-  },
-  {
-    title: "Contact Me",
-    data: ["Cheese Cake", "Ice Cream"],
-  },
-  {
-    title: "Contact Me",
-    data: ["Cheese Cake", "Ice Cream"],
-  },
-  {
-    title: "Contact Me",
-    data: ["Cheese Cake", "Ice Cream"],
-  },
-  {
-    title: "Contact Me",
-    data: ["Cheese Cake", "Ice Cream"],
-  },
-  {
-    title: "Contact Me",
-    data: ["Cheese Cake", "Ice Cream"],
+    data: [{ component: ContactMe }],
   },
 ];
 
 export default function Index() {
+  const sectionListRef = useRef<SectionList>(null);
   const [sideHeight, setSideHeight] = useState(0); // Invalid hook call keeps appearing
 
   const [fontsLoaded] = useFonts({
     "Inconsolata-Regular": require("../assets/fonts/Inconsolata-Regular.ttf"),
     "Inconsolata-Bold": require("../assets/fonts/Inconsolata-Bold.ttf"),
   });
+
+  const scrollToSection = (sectionIndex: number) => {
+    sectionListRef.current?.scrollToLocation({
+      sectionIndex: sectionIndex,
+      itemIndex: 0,
+      animated: true,
+      viewPosition: 0, // 0 = top of the screen
+    });
+  };
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -209,25 +192,69 @@ export default function Index() {
                   /> */}
                 </Svg>
               )}
-              <SideNavigationButton title="/ Home"></SideNavigationButton>
-              <SideNavigationButton title="/ Projects"></SideNavigationButton>
-              <SideNavigationButton title="/ Education"></SideNavigationButton>
-              <SideNavigationButton title="/ Experiences"></SideNavigationButton>
-              <SideNavigationButton title="/ Contact me"></SideNavigationButton>
+              <SideNavigationButton
+                title="/ Home"
+                onPress={() => scrollToSection(0)}
+              ></SideNavigationButton>
+              <SideNavigationButton
+                title="/ About"
+                onPress={() => scrollToSection(1)}
+              ></SideNavigationButton>
+              <SideNavigationButton
+                title="/ Projects"
+                onPress={() => scrollToSection(2)}
+              ></SideNavigationButton>
+              <SideNavigationButton
+                title="/ Education"
+                onPress={() => scrollToSection(3)}
+              ></SideNavigationButton>
+              <SideNavigationButton
+                title="/ Experiences"
+                onPress={() => scrollToSection(4)}
+              ></SideNavigationButton>
+              <SideNavigationButton
+                title="/ Contact Me"
+                onPress={() => scrollToSection(5)}
+              ></SideNavigationButton>
             </View>
           </View>
 
-          <SectionList
+          {/* <SectionList
+            ref={sectionListRef}
+            style={styles.sectionView}
             sections={DATA}
             keyExtractor={(item, index) => item + index}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text style={styles.header}>{title}</Text>
+            )}
             renderItem={({ item }) => (
-              <View>
-                <Text>{item}</Text>
+              <View style={styles.contentView}>
+                <Text style={styles.normalText}>{item}</Text>
               </View>
             )}
+            snapToInterval={getContentHeight()}
+            decelerationRate="fast"
+            snapToAlignment="start"
+          /> */}
+          <SectionList
+            ref={sectionListRef}
+            style={styles.sectionView}
+            sections={DATA}
+            keyExtractor={(item, index) => index.toString()}
             renderSectionHeader={({ section: { title } }) => (
-              <Text>{title}</Text>
+              <Text style={styles.header}>{title}</Text>
             )}
+            renderItem={({ item }) => {
+              const Component = item.component;
+              return (
+                <View style={styles.contentView}>
+                  <Component />
+                </View>
+              );
+            }}
+            snapToInterval={getContentHeight()}
+            decelerationRate="fast"
+            snapToAlignment="start"
           />
         </View>
 
@@ -307,7 +334,14 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     alignItems: "flex-start",
   },
-  contentView: {},
+  sectionView: {
+    flex: 1,
+    padding: 16,
+  },
+  contentView: {
+    flex: 1,
+    minHeight: getContentHeight(),
+  },
   headerIcons: {
     flexDirection: "row", // Make the icons have the same thickness as the header
     gap: 16,
@@ -321,6 +355,11 @@ const styles = StyleSheet.create({
   subHeader: {
     fontFamily: "Inconsolata-Bold",
     fontSize: 14,
+    color: DARKEST,
+  },
+  normalText: {
+    fontFamily: "Inconsolata-Bold",
+    fontSize: 12,
     color: DARKEST,
   },
 });
