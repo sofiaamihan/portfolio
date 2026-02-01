@@ -57,7 +57,7 @@ const SideNavigationButton: React.FC<SideNavigationButtonProps> = ({
 
 const DATA = [
   {
-    title: "Home",
+    title: "",
     data: [{ component: Home }],
   },
   {
