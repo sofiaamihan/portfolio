@@ -5,7 +5,7 @@ const DARKEST = "#6c5946";
 export function Projects() {
   return (
     <View>
-      <Text style={styles.normalText}>This is the Projects Section.</Text>
+      <Text style={styles.normalText}>This is the projects section.</Text>
     </View>
   );
 }

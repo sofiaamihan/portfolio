@@ -88,6 +88,7 @@ export default function Index() {
 
   const [fontsLoaded] = useFonts({
     "Inconsolata-Regular": require("../assets/fonts/Inconsolata-Regular.ttf"),
+    "Inconsolata-SemiBold": require("../assets/fonts/Inconsolata-SemiBold.ttf"),
     "Inconsolata-Bold": require("../assets/fonts/Inconsolata-Bold.ttf"),
   });
 
