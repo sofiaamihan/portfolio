@@ -1,11 +1,16 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 const DARKEST = "#6c5946";
 
 export function About() {
   return (
     <View style={styles.container}>
-      <View style={styles.imageBox}></View>
+      <View style={styles.imageBox}>
+        <Image
+          source={require("../assets/images/profile.png")}
+          style={styles.image}
+        />
+      </View>
       <View style={styles.textBox}>
         <Text style={styles.normalText}>
           Hi! I&apos;m a <Text style={styles.boldText}>Year 3 Scholar</Text> at
@@ -41,7 +46,7 @@ export function About() {
         <Text style={styles.normalText}>
           Beyond academics, I have accumulated{" "}
           <Text style={styles.boldText}>over 300 volunteer hours</Text>, as a
-          Website Designer, Blog Writier, and Community Advocate for Mental
+          Website Designer, Blog Writer, and Community Advocate for Mental
           Health. I enjoy exploring mathematical concepts and their applications
           in Image Processing tasks, finding representations of dystopian cinema
           into my work.
@@ -77,6 +82,11 @@ const styles = StyleSheet.create({
   },
   imageBox: {
     flex: 1,
-    backgroundColor: "#6c5946",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  image: {
+    height: 450,
+    width: 500,
   },
 });
