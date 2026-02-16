@@ -61,23 +61,23 @@ const DATA = [
     data: [{ component: Home }],
   },
   {
-    title: "About",
+    title: "c: / sofiaamihan@portfolio / about",
     data: [{ component: About }],
   },
   {
-    title: "Projects",
+    title: "c: / sofiaamihan@portfolio / projects",
     data: [{ component: Projects }],
   },
   {
-    title: "Education",
+    title: "c: / sofiaamihan@portfolio / education",
     data: [{ component: Education }],
   },
   {
-    title: "Experiences",
+    title: "c: / sofiaamihan@portfolio / experiences",
     data: [{ component: Experiences }],
   },
   {
-    title: "Contact Me",
+    title: "c: / sofiaamihan@portfolio / contactme",
     data: [{ component: ContactMe }],
   },
 ];
@@ -194,27 +194,27 @@ export default function Index() {
                 </Svg>
               )}
               <SideNavigationButton
-                title="/ Home"
+                title="/ home"
                 onPress={() => scrollToSection(0)}
               ></SideNavigationButton>
               <SideNavigationButton
-                title="/ About"
+                title="/ about"
                 onPress={() => scrollToSection(1)}
               ></SideNavigationButton>
               <SideNavigationButton
-                title="/ Projects"
+                title="/ projects"
                 onPress={() => scrollToSection(2)}
               ></SideNavigationButton>
               <SideNavigationButton
-                title="/ Education"
+                title="/ education"
                 onPress={() => scrollToSection(3)}
               ></SideNavigationButton>
               <SideNavigationButton
-                title="/ Experiences"
+                title="/ experiences"
                 onPress={() => scrollToSection(4)}
               ></SideNavigationButton>
               <SideNavigationButton
-                title="/ Contact Me"
+                title="/ contact Me"
                 onPress={() => scrollToSection(5)}
               ></SideNavigationButton>
             </View>
