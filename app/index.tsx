@@ -260,6 +260,10 @@ export default function Index() {
         </View>
 
         <View style={styles.footerView}>
+          <Text style={styles.normalText}>
+            Build and Designed by Sofia Amihan.
+          </Text>
+          <Text style={styles.normalText}>All rights reserved. ©</Text>
           {/* <Svg
             height="40"
             width="100%"
@@ -311,6 +315,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent", // This does not work because it's not layered over the content
     height: FOOTER_HEIGHT,
     padding: 16,
+    justifyContent: "center",
   },
   middleView: {
     flex: 1,
@@ -359,7 +364,7 @@ const styles = StyleSheet.create({
     color: DARKEST,
   },
   normalText: {
-    fontFamily: "Inconsolata-Bold",
+    fontFamily: "Inconsolata-Regular",
     fontSize: 12,
     color: DARKEST,
   },
