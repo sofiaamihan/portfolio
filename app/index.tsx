@@ -77,7 +77,7 @@ const DATA = [
     data: [{ component: Experiences }],
   },
   {
-    title: "c: / sofiaamihan@portfolio / contactme",
+    title: "c: / sofiaamihan@portfolio / contact-me",
     data: [{ component: ContactMe }],
   },
 ];
@@ -214,7 +214,7 @@ export default function Index() {
                 onPress={() => scrollToSection(4)}
               ></SideNavigationButton>
               <SideNavigationButton
-                title="/ contact Me"
+                title="/ contact me"
                 onPress={() => scrollToSection(5)}
               ></SideNavigationButton>
             </View>

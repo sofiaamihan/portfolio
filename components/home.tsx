@@ -68,7 +68,7 @@ export function Home() {
     for (let i = 0; i < maxParticleCount; i++) {
       // Random position within sphere
       // const radius = Math.random() * sphereRadius;
-      const radius = Math.pow(Math.random(), 0.7) * sphereRadius; // Change distribution level, 0.1 means super dispersed
+      const radius = Math.pow(Math.random(), 0.5) * sphereRadius; // Change distribution level, 0.1 means super dispersed
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
 
@@ -139,7 +139,7 @@ export function Home() {
       let vertexpos = 0;
       let colorpos = 0;
       let numConnected = 0;
-      const minDistance = 150;
+      const minDistance = 240; // Adjust this alongside distribution
 
       // Reset connections
       for (let i = 0; i < particleCount; i++) {
@@ -162,9 +162,13 @@ export function Home() {
 
         // If particle goes too far, wrap it back to the opposite side
         if (distFromCenter > sphereRadius) {
-          particlePositions[i * 3] = -x * 0.5;
-          particlePositions[i * 3 + 1] = -y * 0.5;
-          particlePositions[i * 3 + 2] = -z * 0.5;
+          const normalizedX = (x / distFromCenter) * sphereRadius * 0.9;
+          const normalizedY = (y / distFromCenter) * sphereRadius * 0.9;
+          const normalizedZ = (z / distFromCenter) * sphereRadius * 0.9;
+
+          particlePositions[i * 3] = -normalizedX;
+          particlePositions[i * 3 + 1] = -normalizedY;
+          particlePositions[i * 3 + 2] = -normalizedZ;
         }
 
         // Check connections with other particles
