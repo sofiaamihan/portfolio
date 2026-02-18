@@ -94,6 +94,10 @@ export default function Index() {
   const [sideHeight, setSideHeight] = useState(0); // Invalid hook call keeps appearing
   const [sideDimensions, setSideDimensions] = useState({ width: 0, height: 0 });
   const [activeSection, setActiveSection] = useState(0);
+  const [bottomDimensions, setBottomDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
@@ -297,6 +301,40 @@ export default function Index() {
             decelerationRate="fast"
             snapToAlignment="start"
           />
+          <View
+            style={styles.bottomNavigation}
+            onLayout={(event) => {
+              const { height, width } = event.nativeEvent.layout;
+              setBottomDimensions({ width, height });
+            }}
+          >
+            {bottomDimensions.width > 0 && bottomDimensions.height > 0 && (
+              <Svg height="100%" width="100%" style={StyleSheet.absoluteFill}>
+                <Defs>
+                  <ClipPath id="clipBottom">
+                    <Polygon
+                      points={`0,0 ${bottomDimensions.width},0 ${bottomDimensions.width * 0.95},${bottomDimensions.height} 0,${bottomDimensions.height}`}
+                    />
+                  </ClipPath>
+                </Defs>
+                <Rect
+                  width="100%"
+                  height="100%"
+                  fill={PINK80}
+                  clipPath="url(#clipBottom)"
+                />
+              </Svg>
+            )}
+            <View style={styles.bottomNavigationLeft}>
+              <Text style={styles.subHeader2}>[ ⬆ / ⬇ ] Navigate</Text>
+              <Text style={styles.subHeader2}>[ ESC ] Home</Text>
+            </View>
+            <View style={styles.bottomNavigationRight}>
+              <Text style={styles.subHeader2}>
+                [ sofiaamihanmrespeto@gmail.com ] Contact
+              </Text>
+            </View>
+          </View>
         </View>
 
         <View style={styles.footerView}>
@@ -389,6 +427,7 @@ const styles = StyleSheet.create({
   contentView: {
     flex: 1,
     minHeight: getContentHeight(),
+    paddingBottom: 16,
   },
   headerIcons: {
     flexDirection: "row", // Make the icons have the same thickness as the header
@@ -402,6 +441,11 @@ const styles = StyleSheet.create({
   },
   subHeader: {
     fontFamily: "Inconsolata-Bold",
+    fontSize: 14,
+    color: BACKGROUND,
+  },
+  subHeader2: {
+    fontFamily: "Inconsolata-Regular",
     fontSize: 14,
     color: BACKGROUND,
   },
@@ -425,5 +469,26 @@ const styles = StyleSheet.create({
   arrow: {
     marginLeft: 8,
     color: BACKGROUND,
+  },
+  bottomNavigation: {
+    position: "absolute",
+    bottom: 16,
+    left: SIDE_WIDTH + 32,
+    right: 32,
+    alignItems: "center",
+    // backgroundColor: PINK80,
+    borderRadius: 2,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    pointerEvents: "none",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  bottomNavigationLeft: {
+    flexDirection: "row",
+    gap: 20,
+  },
+  bottomNavigationRight: {
+    paddingRight: 48,
   },
 });
