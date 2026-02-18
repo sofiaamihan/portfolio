@@ -21,26 +21,97 @@ export function About() {
           ways to integrate creativity into my solutions, as an amateur
           cinephile.
         </Text>
+        <Text style={styles.boldText}>CGPA: 3.95/4.0</Text>
         <View>
-          <Text style={styles.boldText}>CGPA: 3.95/4.0</Text>
-          <View>
-            <Text style={styles.boldText}>
-              Focus: Software Development for Web and Mobile Applications
-            </Text>
-            <ul>
-              <li style={styles.normalText}>JavaScript - React.js</li>
-              <li style={styles.normalText}>TypeScript - React Native</li>
-              <li style={styles.normalText}>Python - Machine Learning</li>
-              <li style={styles.normalText}>Kotlin - Jetpack Compose</li>
-            </ul>
-          </View>
-          <View>
-            <Text style={styles.boldText}>Focus: Software Testing</Text>
-            <ul>
-              <li style={styles.normalText}>Python - Selenium</li>
-              <li style={styles.normalText}>JavaScript - Postman</li>
-              <li style={styles.normalText}>Java - JMeter</li>
-            </ul>
+          <Text style={styles.boldText}>Technologies</Text>
+          <View style={styles.technologies}>
+            <View>
+              <Text style={styles.normalText}>Languages</Text>
+              <Image
+                style={styles.badge}
+                source={require("../assets/badges/javascript.png")}
+                resizeMode="contain"
+              />
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/python.png")}
+              />
+              <Image
+                style={styles.badge}
+                source={require("../assets/badges/kotlin.png")}
+                resizeMode="contain"
+              />
+              <Image
+                style={styles.badge}
+                source={require("../assets/badges/typescript.png")}
+                resizeMode="contain"
+              />
+            </View>
+            <View>
+              <Text style={styles.normalText}>Libraries</Text>
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/react.png")}
+              />
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/selenium.png")}
+              />
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/compose.png")}
+              />
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/reactnative.png")}
+              />
+            </View>
+            <View>
+              <Text style={styles.normalText}>Applications</Text>
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/postman.png")}
+              />
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/jmeter.png")}
+              />
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/raspberrypi.png")}
+              />
+            </View>
+            <View>
+              <Text style={styles.normalText}>Databases</Text>
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/mongodb.png")}
+              />
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/firebase.png")}
+              />
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/room.png")}
+              />
+              <Image
+                style={styles.badge}
+                resizeMode="contain"
+                source={require("../assets/badges/aws.png")}
+              />
+            </View>
           </View>
         </View>
         <Text style={styles.normalText}>
@@ -86,7 +157,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    height: 450,
-    width: 500,
+    height: 345,
+    width: 462,
+  },
+  technologies: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  badge: {
+    width: 100,
+    height: 25,
+    marginBottom: 4,
   },
 });
