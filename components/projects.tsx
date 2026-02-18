@@ -14,9 +14,11 @@ import {
 import Svg, { ClipPath, Defs, Polygon, Rect } from "react-native-svg";
 
 const DARKEST = "#6c5946";
-const LIGHT = "#c4b8a4";
-const CREAM = "#e8dcc8";
-const TECH_BOX_BG = "#e5ddd5";
+const BACKGROUND = "#f7f1de";
+const BACKGROUND02 = "#f7f1de60";
+const BACKGROUND06 = "#f7f1de60";
+const BACKGROUND08 = "#f7f1de80";
+const GITHUBBACKGROUND = "#ffffff";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -27,7 +29,7 @@ const projectsData = [
       "Cloud-Integrated Healthcare Application leveraging AWS, with Real-Time Sensor Data, Offline Persistence, and MVVM Architecture via Kotlin and Jetpack Compose",
     image:
       "https://raw.githubusercontent.com/sofiaamihan/healthcare-application/refs/heads/main/data/main.png",
-    techStack: ["Kotlin", "Jetpack Compose"],
+    techStack: ["kotlin", "compose"],
     githubUrl: "https://github.com/sofiaamihan/healthcare-application",
   },
   {
@@ -36,7 +38,7 @@ const projectsData = [
       "Worldwide Gross Revenue($) Predictive Model of Films via Categorical Boosting Regression Techniques",
     image:
       "https://raw.githubusercontent.com/sofiaamihan/box-office-analyser/refs/heads/main/data/application.png",
-    techStack: ["Python", "Machine Learning"],
+    techStack: ["python"],
     githubUrl: "https://github.com/sofiaamihan/box-office-analyser",
   },
   {
@@ -45,7 +47,7 @@ const projectsData = [
       "Developed for Temasek Polytechnic, an AI-Driven Telegram Bot that automates Image Processing Tasks for Scavenger Hunts",
     image:
       "https://raw.githubusercontent.com/sofiaamihan/wefie-hunt-ai/refs/heads/main/Data/student-interface.png",
-    techStack: ["Python", "OpenCV", "AWS"],
+    techStack: ["python", "aws"],
     githubUrl: "https://github.com/sofiaamihan/wefie-hunt-ai",
   },
   {
@@ -54,7 +56,7 @@ const projectsData = [
       "Interactive Memory Game integrating Flask Web App with Raspberry Pi GPIO Hardware",
     image:
       "https://raw.githubusercontent.com/Troaxx/twcc/refs/heads/main/data/hardware.png",
-    techStack: ["Python", "Raspberry-Pi", "Flask"],
+    techStack: ["python", "raspberrypi"],
     githubUrl: "https://github.com/sofiaamihan/twcc",
   },
   {
@@ -63,7 +65,7 @@ const projectsData = [
       "An AI-Driven Smart Wealth Management Application for UBS through Decentralised Data Management with PODs",
     image:
       "https://raw.githubusercontent.com/Troaxx/aura/refs/heads/main/data/main.png",
-    techStack: ["TypeScript", "ReactNative", "AI Chatbot"],
+    techStack: ["typescript", "reactnative"],
     githubUrl: "https://github.com/sofiaamihan/smart-wealth-management",
   },
   {
@@ -72,7 +74,7 @@ const projectsData = [
       "Decomposition and Abstraction in a Turn-Based Strategy Game Inspired by Pokémon Showdown",
     image:
       "https://raw.githubusercontent.com/sofiaamihan/alchemy-saga/refs/heads/main/data/battle-screen.png",
-    techStack: ["Python", "Tkinter"],
+    techStack: ["python"],
     githubUrl: "https://github.com/sofiaamihan/alchemy-saga",
   },
   {
@@ -80,7 +82,7 @@ const projectsData = [
     description: "Extract frequencies from your desired audio via FFT",
     image:
       "https://raw.githubusercontent.com/sofiaamihan/fourier-transform-extraction/refs/heads/main/data/sample.png",
-    techStack: ["Python", "Fast Fourier Transform"],
+    techStack: ["python"],
     githubUrl: "https://github.com/sofiaamihan/fourier-transform-extraction",
   },
   {
@@ -89,7 +91,7 @@ const projectsData = [
       "Sustainable Tourism Platform developed with Flutter, Dart, and Firebase",
     image:
       "https://raw.githubusercontent.com/sofiaamihan/eco-explore/refs/heads/main/data/main-screens.png",
-    techStack: ["Dart", "Flutter", "Firebase"],
+    techStack: ["firebase"],
     githubUrl: "https://github.com/sofiaamihan/eco-explore",
   },
 ];
@@ -151,6 +153,24 @@ const ProjectFrame = ({
     ]).start();
   };
 
+  const badgeMap: Record<string, any> = {
+    javascript: require("../assets/badges/javascript.png"),
+    python: require("../assets/badges/python.png"),
+    kotlin: require("../assets/badges/kotlin.png"),
+    typescript: require("../assets/badges/typescript.png"),
+    react: require("../assets/badges/react.png"),
+    selenium: require("../assets/badges/selenium.png"),
+    compose: require("../assets/badges/compose.png"),
+    reactnative: require("../assets/badges/reactnative.png"),
+    postman: require("../assets/badges/postman.png"),
+    jmeter: require("../assets/badges/jmeter.png"),
+    raspberrypi: require("../assets/badges/raspberrypi.png"),
+    mongodb: require("../assets/badges/mongodb.png"),
+    firebase: require("../assets/badges/firebase.png"),
+    room: require("../assets/badges/room.png"),
+    aws: require("../assets/badges/aws.png"),
+  };
+
   return (
     <Animated.View
       style={[
@@ -177,35 +197,41 @@ const ProjectFrame = ({
         >
           <Defs>
             <ClipPath id={`clip-${index}`}>
-              <Polygon points="20,0 85,0 100,15 100,100 56,100 46,90 0,90 0,0" />
+              {/* <Polygon points="20,0 85,0 100,15 100,100 56,100 46,90 0,90 0,0" /> */}
+              <Polygon points="68,0 80,10 100,10 100,100 0,100 0,60 0,0" />
             </ClipPath>
           </Defs>
           <Rect
             width="100"
             height="100"
-            fill={LIGHT}
+            fill={BACKGROUND06}
             clipPath={`url(#clip-${index})`}
           />
         </Svg>
-
         {/* Content overlay */}
         <View style={styles.frameContent}>
-          <View>
-            <Text style={styles.subHeader}>{project.title}</Text>
+          <Text style={styles.subHeader}>{project.title}</Text>
+          <View style={styles.frameBox}>
             <Text style={styles.normalText}>{project.description}</Text>
-          </View>
-          <View>
-            <Image
-              source={{ uri: project.image }}
-              style={styles.projectImage}
-              resizeMode="contain"
-            />
-            <View style={styles.techStackContainer}>
-              {project.techStack.map((tech, idx) => (
-                <View key={idx} style={styles.techBox}>
-                  <Text style={styles.normalText}>{tech}</Text>
-                </View>
-              ))}
+            <View>
+              <Image
+                source={{ uri: project.image }}
+                style={styles.projectImage}
+                resizeMode="contain"
+              />
+              <View style={styles.techStackContainer}>
+                {project.techStack.map((tech, idx) => (
+                  // <View key={idx} style={styles.techBox}>
+                  //   <Text style={styles.normalText}>{tech}</Text>
+                  // </View>
+                  <Image
+                    key={idx}
+                    style={styles.badge}
+                    source={badgeMap[tech]}
+                    resizeMode="contain"
+                  />
+                ))}
+              </View>
             </View>
           </View>
         </View>
@@ -256,7 +282,7 @@ export function Projects() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    paddingTop: "5%",
     alignItems: "center",
   },
   subHeader: {
@@ -264,6 +290,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: DARKEST,
     marginBottom: 4,
+    flex: 1,
   },
   normalText: {
     fontFamily: "Inconsolata-Regular",
@@ -290,7 +317,7 @@ const styles = StyleSheet.create({
   perforation: {
     width: 35,
     height: 18,
-    backgroundColor: CREAM,
+    backgroundColor: BACKGROUND08,
     minWidth: 35,
   },
   framesContainer: {
@@ -311,7 +338,7 @@ const styles = StyleSheet.create({
     // },
     // shadowOpacity: 0.2,
     // shadowRadius: 8,
-    elevation: 5,
+    // elevation: 5,
     cursor: "pointer",
   },
   touchableContent: {
@@ -324,10 +351,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     // paddingBottom: 40,
   },
+  frameBox: {
+    backgroundColor: BACKGROUND02,
+    flex: 10,
+    borderRadius: 2,
+    padding: 8,
+    justifyContent: "space-between",
+  },
   projectImage: {
     width: "100%",
     height: 140,
-    backgroundColor: TECH_BOX_BG,
+    backgroundColor: GITHUBBACKGROUND,
     marginBottom: 8,
     borderRadius: 4,
   },
@@ -335,12 +369,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
-    marginBottom: 24,
   },
-  techBox: {
-    backgroundColor: TECH_BOX_BG,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
+  badge: {
+    width: 100,
+    height: 25,
+    marginBottom: 4,
   },
 });
