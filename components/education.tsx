@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 
 const DARKEST = "#6c5946";
-const SHADOW = "#e6ccb2";
+const POP08 = "#e2b59a80";
 
 const educationData = [
   {
@@ -20,7 +20,7 @@ const educationData = [
       "• WorldSkills Silver - Software Testing",
       "• WorldSkills Bronze - Mobile App Development",
     ],
-    image: "",
+    image: require("../assets/images/tp.jpg"),
   },
   {
     school: "Dunman Secondary School",
@@ -32,7 +32,7 @@ const educationData = [
       "• Chief Commissioner's Award",
       "• Outstanding CCA Leadership Award",
     ],
-    image: "",
+    image: require("../assets/images/dss.jpg"),
   },
 ];
 
@@ -46,9 +46,9 @@ const EducationFrame = ({
   return (
     <View style={styles.educationCard}>
       <Image
-        source={{ uri: education.image }}
+        source={education.image}
         style={styles.educationImage}
-        resizeMode="contain"
+        resizeMode="cover"
       />
       <View style={styles.title}>
         <Text style={styles.header}>{education.school}</Text>
@@ -116,12 +116,12 @@ const styles = StyleSheet.create({
   },
   normalText: {
     fontFamily: "Inconsolata-Regular",
-    fontSize: 14,
+    fontSize: 12,
     color: DARKEST,
   },
   boldText: {
     fontFamily: "Inconsolata-Bold",
-    fontSize: 14,
+    fontSize: 12,
     color: DARKEST,
   },
   container: {
@@ -129,13 +129,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   educationCard: {
-    backgroundColor: SHADOW,
+    backgroundColor: POP08,
     height: "85%",
     width: "32%",
     margin: 20,
+    shadowColor: DARKEST,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
   educationImage: {
     height: 200,
+    width: "90%",
     backgroundColor: DARKEST,
     marginTop: 20,
     marginRight: 20,
