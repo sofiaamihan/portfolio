@@ -33,24 +33,31 @@ const getContentHeight = () => {
   return Dimensions.get("window").height - HEADER_HEIGHT - FOOTER_HEIGHT;
 };
 
-const LIGHTEST = "#f7f1de";
+const BACKGROUND = "#f7f1de";
 const DARKEST = "#6c5946";
-const DARK = "#957c63";
-// const SHADOW = "#c4a484";
-const LIGHT = "#e2b59a";
+const PINK = "#B77366";
+const PINK80 = "#b77366cf";
 
 interface SideNavigationButtonProps {
   title: string;
   onPress?: () => void;
+  isActive?: boolean;
 }
 
 const SideNavigationButton: React.FC<SideNavigationButtonProps> = ({
   title,
   onPress = () => {},
+  isActive = false,
 }) => {
   return (
-    <TouchableOpacity style={styles.sideNavigationButtons} onPress={onPress}>
-      <Text style={styles.subHeader}>{title}</Text>
+    <TouchableOpacity style={[styles.sideNavigationButtons]} onPress={onPress}>
+      {/* {isActive && <View style={styles.activeIndicator} />} */}
+      <View style={[styles.activeBox, isActive && styles.activeBoxVisible]}>
+        <Text style={styles.subHeader}>{title}</Text>
+        {isActive && (
+          <Text style={[styles.subHeader, styles.arrow]}>{"<"}</Text>
+        )}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -85,6 +92,21 @@ const DATA = [
 export default function Index() {
   const sectionListRef = useRef<SectionList>(null);
   const [sideHeight, setSideHeight] = useState(0); // Invalid hook call keeps appearing
+  const [sideDimensions, setSideDimensions] = useState({ width: 0, height: 0 });
+  const [activeSection, setActiveSection] = useState(0);
+
+  const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
+    if (viewableItems.length > 0) {
+      const sectionIndex = viewableItems[0].section
+        ? DATA.findIndex((d) => d.title === viewableItems[0].section.title)
+        : 0;
+      if (sectionIndex >= 0) setActiveSection(sectionIndex);
+    }
+  }).current;
+
+  const viewabilityConfig = useRef({
+    viewAreaCoveragePercentThreshold: 50,
+  }).current;
 
   const [fontsLoaded] = useFonts({
     "Inconsolata-Regular": require("../assets/fonts/Inconsolata-Regular.ttf"),
@@ -93,11 +115,12 @@ export default function Index() {
   });
 
   const scrollToSection = (sectionIndex: number) => {
+    setActiveSection(sectionIndex);
     sectionListRef.current?.scrollToLocation({
-      sectionIndex: sectionIndex,
+      sectionIndex,
       itemIndex: 0,
       animated: true,
-      viewPosition: 0, // 0 = top of the screen
+      viewPosition: 0,
     });
   };
 
@@ -165,82 +188,99 @@ export default function Index() {
             <View
               style={styles.sideNavigation}
               onLayout={(event) => {
-                const { height } = event.nativeEvent.layout;
-                setSideHeight(height);
+                const { height, width } = event.nativeEvent.layout;
+                setSideDimensions({ width, height });
               }}
             >
-              {sideHeight > 0 && (
+              {sideDimensions.width > 0 && sideDimensions.height > 0 && (
                 <Svg height="100%" width="100%" style={StyleSheet.absoluteFill}>
                   <Defs>
                     <ClipPath id="clip">
                       <Polygon
-                        points={`0,0 ${SIDE_WIDTH * 0.7},0 ${SIDE_WIDTH},${sideHeight * 0.2} ${SIDE_WIDTH},${sideHeight} ${SIDE_WIDTH * 0.2},${sideHeight} 0,${sideHeight * 0.9}`}
+                        points={`0,0 ${sideDimensions.width * 0.7},0 ${sideDimensions.width},${sideDimensions.height * 0.1} ${sideDimensions.width},${sideDimensions.height} ${sideDimensions.width * 0.2},${sideDimensions.height} 0,${sideDimensions.height * 0.9}`}
                       />
                     </ClipPath>
                   </Defs>
                   <Rect
                     width="100%"
                     height="100%"
-                    fill={LIGHT}
+                    fill={PINK80}
                     clipPath="url(#clip)"
                   />
-                  {/* Border but incomplete */}
+                  <Defs>
+                    <ClipPath id="clip2">
+                      <Polygon
+                        points={`2,2 ${sideDimensions.width * 0.695},2 ${sideDimensions.width - 2},${sideDimensions.height * 0.1} ${sideDimensions.width - 2},${sideDimensions.height - 2} ${sideDimensions.width * 0.2},${sideDimensions.height - 2.5} 2,${sideDimensions.height * 0.9}`}
+                      />
+                    </ClipPath>
+                  </Defs>
+                  <Rect
+                    width="100%"
+                    height="100%"
+                    fill={BACKGROUND}
+                    clipPath="url(#clip2)"
+                  />
+                  <Defs>
+                    <ClipPath id="clip3">
+                      <Polygon
+                        points={`4,4 ${sideDimensions.width * 0.69},4 ${sideDimensions.width - 4},${sideDimensions.height * 0.1} ${sideDimensions.width - 4},${sideDimensions.height - 4} ${sideDimensions.width * 0.2},${sideDimensions.height - 5} 4,${sideDimensions.height * 0.9}`}
+                      />
+                    </ClipPath>
+                  </Defs>
+                  <Rect
+                    width="100%"
+                    height="100%"
+                    fill={PINK80}
+                    clipPath="url(#clip3)"
+                  />
+                  {/* Potential Fake Inner Shadow*/}
                   {/* <Polygon
-                    points={`0,0 ${SIDE_WIDTH * 0.7},0 ${SIDE_WIDTH},${sideHeight * 0.2} ${SIDE_WIDTH},${sideHeight} ${SIDE_WIDTH * 0.2},${sideHeight} 0,${sideHeight * 0.9}`}
+                    points={`4,4 ${sideDimensions.width * 0.69},4 ${sideDimensions.width - 4},${sideDimensions.height * 0.1} ${sideDimensions.width - 4},${sideDimensions.height - 4} ${sideDimensions.width * 0.2},${sideDimensions.height - 5} 4,${sideDimensions.height * 0.9}`}
                     fill="none"
-                    stroke={DARK}
-                    strokeWidth="2"
+                    stroke={DARKEST}
+                    strokeWidth="6"
+                    strokeOpacity="0.15"
                   /> */}
                 </Svg>
               )}
               <SideNavigationButton
                 title="/ home"
+                isActive={activeSection === 0}
                 onPress={() => scrollToSection(0)}
-              ></SideNavigationButton>
+              />
               <SideNavigationButton
                 title="/ about"
+                isActive={activeSection === 1}
                 onPress={() => scrollToSection(1)}
-              ></SideNavigationButton>
+              />
               <SideNavigationButton
                 title="/ projects"
+                isActive={activeSection === 2}
                 onPress={() => scrollToSection(2)}
-              ></SideNavigationButton>
+              />
               <SideNavigationButton
                 title="/ education"
+                isActive={activeSection === 3}
                 onPress={() => scrollToSection(3)}
-              ></SideNavigationButton>
+              />
               <SideNavigationButton
                 title="/ experiences"
+                isActive={activeSection === 4}
                 onPress={() => scrollToSection(4)}
-              ></SideNavigationButton>
+              />
               <SideNavigationButton
                 title="/ contact me"
+                isActive={activeSection === 5}
                 onPress={() => scrollToSection(5)}
-              ></SideNavigationButton>
+              />
             </View>
           </View>
-
-          {/* <SectionList
-            ref={sectionListRef}
-            style={styles.sectionView}
-            sections={DATA}
-            keyExtractor={(item, index) => item + index}
-            renderSectionHeader={({ section: { title } }) => (
-              <Text style={styles.header}>{title}</Text>
-            )}
-            renderItem={({ item }) => (
-              <View style={styles.contentView}>
-                <Text style={styles.normalText}>{item}</Text>
-              </View>
-            )}
-            snapToInterval={getContentHeight()}
-            decelerationRate="fast"
-            snapToAlignment="start"
-          /> */}
           <SectionList
             ref={sectionListRef}
             style={styles.sectionView}
             sections={DATA}
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={viewabilityConfig}
             keyExtractor={(item, index) => index.toString()}
             renderSectionHeader={({ section: { title } }) => (
               <Text style={styles.header}>{title}</Text>
@@ -300,11 +340,11 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   mainView: {
-    backgroundColor: "#f7f1de",
+    backgroundColor: BACKGROUND,
     flex: 1,
   },
   headerView: {
-    backgroundColor: "#f7f1de",
+    backgroundColor: BACKGROUND,
     height: HEADER_HEIGHT,
     flexDirection: "row",
     padding: 42,
@@ -322,7 +362,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   sideView: {
-    backgroundColor: LIGHTEST,
+    backgroundColor: BACKGROUND,
     padding: 16,
     width: SIDE_WIDTH,
   },
@@ -339,6 +379,8 @@ const styles = StyleSheet.create({
   sideNavigationButtons: {
     backgroundColor: "transparent",
     alignItems: "flex-start",
+    // paddingBottom: 48,
+    // height: "20%",
   },
   sectionView: {
     flex: 1,
@@ -361,11 +403,27 @@ const styles = StyleSheet.create({
   subHeader: {
     fontFamily: "Inconsolata-Bold",
     fontSize: 14,
-    color: DARKEST,
+    color: BACKGROUND,
   },
   normalText: {
     fontFamily: "Inconsolata-Regular",
     fontSize: 12,
     color: DARKEST,
+  },
+  activeBox: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderRadius: 2,
+  },
+  activeBoxVisible: {
+    backgroundColor: PINK,
+  },
+  arrow: {
+    marginLeft: 8,
+    color: BACKGROUND,
   },
 });
