@@ -1,9 +1,10 @@
+// import { Button } from "@react-navigation/elements";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
 const DARKEST = "#6c5946";
-const POP = "#b87466";
+const POP60 = "#b8746660";
 
 export function ContactMe() {
   const [firstName, onChangeFirstName] = useState("");
@@ -13,31 +14,28 @@ export function ContactMe() {
   return (
     <View style={styles.container}>
       <View style={styles.informationView}>
-        <Text style={styles.subHeader}>Get In Touch!</Text>
-        <Text style={styles.boldText}>I&apos;d like to hear from you!</Text>
-        <Text style={styles.normalText}>
-          If you have any inquiries or just want to say hi, please use the
-          contact form!
-        </Text>
+        <Image
+          source={require("../assets/images/get-in-touch.png")}
+          style={styles.image}
+          resizeMode="contain"
+        />
       </View>
       <View style={styles.formView}>
         <View style={styles.fullName}>
-          <View style={styles.input}>
+          <View style={styles.nameInput}>
             <Text style={styles.boldText}>First Name</Text>
             <TextInput
               style={styles.inputText}
               onChangeText={onChangeFirstName}
               value={firstName}
-              placeholder="First Name"
             />
           </View>
-          <View style={styles.input}>
+          <View style={styles.nameInput}>
             <Text style={styles.boldText}>Last Name</Text>
             <TextInput
               style={styles.inputText}
               onChangeText={onChangeLastName}
               value={lastName}
-              placeholder="Last Name"
             />
           </View>
         </View>
@@ -47,7 +45,6 @@ export function ContactMe() {
             style={styles.inputText}
             onChangeText={onChangeEmail}
             value={email}
-            placeholder="Email"
           />
         </View>
         <View style={styles.input}>
@@ -55,11 +52,14 @@ export function ContactMe() {
           <TextInput
             multiline
             numberOfLines={10}
-            style={styles.inputText}
+            style={[styles.inputText, { minHeight: 120 }]}
             onChangeText={onChangeMessage}
             value={message}
-            placeholder="Last Name"
           />
+          {/* <Button title="Submit" /> */}
+          <Pressable style={styles.submitButton}>
+            <Text style={styles.boldText}>Submit</Text>
+          </Pressable>
         </View>
       </View>
     </View>
@@ -92,23 +92,44 @@ const styles = StyleSheet.create({
     fontFamily: "Inconsolata-Regular",
     fontSize: 14,
     color: DARKEST,
-    borderWidth: 2,
-    borderColor: POP,
+    borderBottomWidth: 1,
+    borderBottomColor: DARKEST,
+    paddingVertical: 8,
+    paddingHorizontal: 0,
+    minWidth: 200,
   },
   informationView: {
     flex: 1,
     padding: 32,
+    paddingTop: 120,
     gap: 8,
+    alignItems: "center",
   },
   formView: {
-    // backgroundColor: POP,
     flex: 1,
     padding: 20,
+    paddingTop: 50,
   },
   fullName: {
     flexDirection: "row",
   },
+  nameInput: {
+    margin: 20,
+    flex: 1,
+  },
   input: {
     margin: 20,
+  },
+  image: {
+    height: 280,
+    width: 462,
+  },
+  submitButton: {
+    backgroundColor: POP60,
+    paddingVertical: 16,
+    paddingHorizontal: 48,
+    alignSelf: "center",
+    marginTop: 16,
+    borderRadius: 4,
   },
 });
