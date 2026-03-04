@@ -1,3 +1,5 @@
+// TODO - Animation when hovered over
+
 import { Image, StyleSheet, View } from "react-native";
 
 const DARKEST = "#6c5946";

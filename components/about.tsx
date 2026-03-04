@@ -1,3 +1,6 @@
+// TODO - Hovering or clicking on the badge displays relevant information
+// TODO - Animate my profile
+
 import { Image, StyleSheet, Text, View } from "react-native";
 
 const DARKEST = "#6c5946";
@@ -21,7 +24,7 @@ export function About() {
           ways to integrate creativity into my solutions, as an amateur
           cinephile.
         </Text>
-        <Text style={styles.boldText}>CGPA: 3.95/4.0</Text>
+        <Text style={styles.boldText}>CGPA: 3.95 / 4.0</Text>
         <View>
           <Text style={styles.boldText}>Technologies</Text>
           <View style={styles.technologies}>

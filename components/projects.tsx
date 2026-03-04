@@ -1,3 +1,8 @@
+// TODO - When a project is hovered over, a pop up to show information more in-depth
+// TODO - Add drop shadows for each folder
+// TODO - Remove the white background in each github photo
+// TODO - Add space for more technologies to display
+
 import { useRef } from "react";
 import {
   Animated,
@@ -18,6 +23,7 @@ const BACKGROUND = "#f7f1de";
 const BACKGROUND02 = "#f7f1de60";
 const BACKGROUND06 = "#f7f1de60";
 const BACKGROUND08 = "#f7f1de80";
+const BACKGROUND09 = "#f7f1de90";
 const GITHUBBACKGROUND = "#ffffff";
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -282,7 +288,7 @@ export function Projects() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: "5%",
+    paddingTop: "3%",
     alignItems: "center",
   },
   subHeader: {
@@ -297,10 +303,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: DARKEST,
   },
-
   filmStripContainer: {
     width: "100%",
+    height: "85%",
     maxWidth: screenWidth - 40,
+    // justifyContent: "center",
   },
   scrollContent: {
     paddingHorizontal: 20,
@@ -308,6 +315,7 @@ const styles = StyleSheet.create({
   filmStrip: {
     backgroundColor: DARKEST,
     padding: 20,
+    justifyContent: "center",
   },
   perforationRow: {
     flexDirection: "row",
@@ -317,7 +325,7 @@ const styles = StyleSheet.create({
   perforation: {
     width: 35,
     height: 18,
-    backgroundColor: BACKGROUND08,
+    backgroundColor: BACKGROUND09,
     minWidth: 35,
   },
   framesContainer: {
@@ -325,7 +333,7 @@ const styles = StyleSheet.create({
     gap: 20,
     marginTop: 20,
     marginBottom: 20,
-    height: 300,
+    height: 320,
   },
   frameWrapper: {
     width: (screenWidth - 140) / 4,

@@ -1,3 +1,7 @@
+// TODO - Find a better image
+// TODO - Make the form functional
+// TODO - Make the form outline not neon blue
+
 // import { Button } from "@react-navigation/elements";
 import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";

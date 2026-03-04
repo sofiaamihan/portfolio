@@ -1,3 +1,15 @@
+// TODO - Support mobile
+// TODO - Screen that says mobile support is coming soon
+// TODO - Screen that says this page not found
+// TODO - Publish on github pages
+// TODO - Convert my badges, icons, etc to SVG format
+// TODO - Increase the selection for side navigation
+// TODO - Add inner shadow for side navigation
+// TODO - Implement functionality for bottom navigation
+// TODO - Implement animations
+// TODO - Add the line at the bottom and shift the footer to the end
+// TODO - Change variables to global file
+
 // import { Button } from "@react-navigation/elements";
 import { About } from "@/components/about";
 import { ContactMe } from "@/components/contact-me";
@@ -339,9 +351,9 @@ export default function Index() {
 
         <View style={styles.footerView}>
           <Text style={styles.normalText}>
-            Build and Designed by Sofia Amihan.
+            Build and Designed by Sofia Amihan. All rights reserved. ©
           </Text>
-          <Text style={styles.normalText}>All rights reserved. ©</Text>
+          {/* <Text style={styles.normalText}>All rights reserved. ©</Text> */}
           {/* <Svg
             height="40"
             width="100%"
@@ -392,8 +404,9 @@ const styles = StyleSheet.create({
   footerView: {
     backgroundColor: "transparent", // This does not work because it's not layered over the content
     height: FOOTER_HEIGHT,
-    padding: 16,
-    justifyContent: "center",
+    padding: 8,
+    // justifyContent: "center",
+    alignItems: "center",
   },
   middleView: {
     flex: 1,
@@ -426,8 +439,9 @@ const styles = StyleSheet.create({
   },
   contentView: {
     flex: 1,
+    // margin: 28,
     minHeight: getContentHeight(),
-    paddingBottom: 16,
+    paddingBottom: 64,
   },
   headerIcons: {
     flexDirection: "row", // Make the icons have the same thickness as the header
