@@ -1,12 +1,9 @@
+import { LIGHTPINK, PINK } from "@/constants/constants";
 import { GLView } from "expo-gl";
 import { Renderer } from "expo-three";
 import { useRef } from "react";
 import { PanResponder, StyleSheet, View } from "react-native";
 import * as THREE from "three";
-
-const DARKEST = "#6c5946";
-const DARK = "#b87466";
-const LIGHT = "#e2b59a";
 
 export function Home() {
   const particlesDataRef = useRef<any[]>([]);
@@ -129,8 +126,8 @@ export function Home() {
     group.add(linesMesh);
 
     // Convert hex colors to RGB values (0-1 range)
-    const darkColor = new THREE.Color(DARK);
-    const lightColor = new THREE.Color(LIGHT);
+    const darkColor = new THREE.Color(PINK);
+    const lightColor = new THREE.Color(LIGHTPINK);
 
     // Animation loop
     const animate = () => {

@@ -17,6 +17,7 @@ import { Education } from "@/components/education";
 import { Experiences } from "@/components/experiences";
 import { Home } from "@/components/home";
 import { Projects } from "@/components/projects";
+import { BACKGROUND, DARKEST, PINK, PINK80 } from "@/constants/constants";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef, useState } from "react";
@@ -44,11 +45,6 @@ const SIDE_WIDTH = isDesktop ? 200 : 0; // This does NOT make it disappear lols
 const getContentHeight = () => {
   return Dimensions.get("window").height - HEADER_HEIGHT - FOOTER_HEIGHT;
 };
-
-const BACKGROUND = "#f7f1de";
-const DARKEST = "#6c5946";
-const PINK = "#B77366";
-const PINK80 = "#b77366cf";
 
 interface SideNavigationButtonProps {
   title: string;

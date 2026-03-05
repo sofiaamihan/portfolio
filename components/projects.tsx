@@ -3,6 +3,13 @@
 // TODO - Remove the white background in each github photo
 // TODO - Add space for more technologies to display
 
+import {
+  BACKGROUND02,
+  BACKGROUND06,
+  BACKGROUND09,
+  DARKEST,
+  GITHUBBACKGROUND,
+} from "@/constants/constants";
 import { useRef } from "react";
 import {
   Animated,
@@ -17,14 +24,6 @@ import {
   View,
 } from "react-native";
 import Svg, { ClipPath, Defs, Polygon, Rect } from "react-native-svg";
-
-const DARKEST = "#6c5946";
-const BACKGROUND = "#f7f1de";
-const BACKGROUND02 = "#f7f1de60";
-const BACKGROUND06 = "#f7f1de60";
-const BACKGROUND08 = "#f7f1de80";
-const BACKGROUND09 = "#f7f1de90";
-const GITHUBBACKGROUND = "#ffffff";
 
 const { width: screenWidth } = Dimensions.get("window");
 

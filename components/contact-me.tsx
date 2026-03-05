@@ -3,12 +3,10 @@
 // TODO - Make the form outline not neon blue
 
 // import { Button } from "@react-navigation/elements";
+import { DARKEST, POP60 } from "@/constants/constants";
 import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-
-const DARKEST = "#6c5946";
-const POP60 = "#b8746660";
 
 export function ContactMe() {
   const [firstName, onChangeFirstName] = useState("");

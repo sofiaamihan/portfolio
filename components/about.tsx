@@ -1,9 +1,8 @@
 // TODO - Hovering or clicking on the badge displays relevant information
 // TODO - Animate my profile
 
+import { DARKEST } from "@/constants/constants";
 import { Image, StyleSheet, Text, View } from "react-native";
-
-const DARKEST = "#6c5946";
 
 export function About() {
   return (

@@ -1,9 +1,9 @@
 // TODO - Animation when hovered over
 
+import { DARKEST } from "@/constants/constants";
 import { Image, StyleSheet, View } from "react-native";
 
-const DARKEST = "#6c5946";
-const POP08 = "#e2b59a80";
+// const POP08 = "#e2b59a80";
 
 // const educationData = [
 //   {
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   educationCard: {
-    backgroundColor: POP08,
+    // backgroundColor: POP08,
     height: "85%",
     width: "32%",
     margin: 20,

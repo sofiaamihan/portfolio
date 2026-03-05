@@ -3,6 +3,7 @@
 // TODO - Style the skills and badges
 // TODO - Make the duration dynamic
 
+import { BEIGE, DARKEST, LIGHTPINK, POP } from "@/constants/constants";
 import { useRef, useState } from "react";
 import {
   Animated,
@@ -15,10 +16,6 @@ import {
   View,
 } from "react-native";
 
-const DARKEST = "#6c5946";
-const POP = "#b874668c";
-const TICKET_BG = "#FFEDD2";
-const BADGE_BG = "#e2b59a";
 const TIMELINE_COL_WIDTH = 32;
 const CIRCLE_SIZE = 16;
 const CIRCLE_MARGIN_TOP = 8;
@@ -314,7 +311,7 @@ const styles = StyleSheet.create({
   ticket: {
     height: 200,
     flexDirection: "row",
-    backgroundColor: TICKET_BG,
+    backgroundColor: BEIGE,
     overflow: "hidden",
     marginTop: 6,
     shadowColor: "#000",
@@ -382,7 +379,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   badge: {
-    backgroundColor: BADGE_BG,
+    backgroundColor: LIGHTPINK,
     borderRadius: 6,
     paddingHorizontal: 14,
     paddingVertical: 10,
