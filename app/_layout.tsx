@@ -1,5 +1,4 @@
 import { Stack } from "expo-router";
-// import { Drawer } from "@/components/drawer";
 
 export default function RootLayout() {
   return (
@@ -11,5 +10,4 @@ export default function RootLayout() {
       <Stack.Screen name="index" />
     </Stack>
   );
-  // return <Drawer />;
 }

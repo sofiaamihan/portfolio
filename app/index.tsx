@@ -8,9 +8,8 @@
 // TODO - Implement functionality for bottom navigation
 // TODO - Implement animations
 // TODO - Add the line at the bottom and shift the footer to the end
-// TODO - Change variables to global file
+// TODO - Set up a splash screen in the future
 
-// import { Button } from "@react-navigation/elements";
 import { About } from "@/components/about";
 import { ContactMe } from "@/components/contact-me";
 import { Education } from "@/components/education";

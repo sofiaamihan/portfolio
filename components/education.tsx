@@ -1,136 +1,125 @@
-// TODO - Animation when hovered over
-
 import { DARKEST } from "@/constants/constants";
-import { Image, StyleSheet, View } from "react-native";
+import { useRef } from "react";
+import { Animated, Image, Platform, StyleSheet, View } from "react-native";
 
-// const POP08 = "#e2b59a80";
+const educationData = [
+  {
+    origin: "tp",
+    styleType: "image",
+  },
+  {
+    origin: "dss",
+    styleType: "image",
+  },
+];
 
-// const educationData = [
-//   {
-//     school: "Temasek Polytechnic",
-//     year: "2023",
-//     duration: "3 Years",
-//     grade: "CGPA: 3.95 / 4.00",
-//     activities: [
-//       "• Vice President: ITSIG",
-//       "• ExCo Member: GiT",
-//       "• Peer Tutor: 5 Modules",
-//     ],
-//     awards: [
-//       "• TP Scholarship",
-//       "• TP Director's List",
-//       "• WorldSkills Silver - Software Testing",
-//       "• WorldSkills Bronze - Mobile App Development",
-//     ],
-//     image: require("../assets/images/tp.jpg"),
-//   },
-//   {
-//     school: "Dunman Secondary School",
-//     year: "2019",
-//     duration: "4 Years",
-//     grade: "Triple Pure Sciences",
-//     activities: ["• Senior Patrol Leader: Dunman Dove Scouts"],
-//     awards: [
-//       "• Chief Commissioner's Award",
-//       "• Outstanding CCA Leadership Award",
-//     ],
-//     image: require("../assets/images/dss.jpg"),
-//   },
-// ];
+const movieData = [
+  {
+    origin: "littlewomen",
+    styleType: "movie",
+  },
+  {
+    origin: "bones",
+    styleType: "movie",
+  },
+  {
+    origin: "substance",
+    styleType: "movie",
+  },
+  {
+    origin: "eternal",
+    styleType: "movie",
+  },
+];
 
-// const EducationFrame = ({
-//   education,
-//   index,
-// }: {
-//   education: (typeof educationData)[0];
-//   index: number;
-// }) => {
-//   return (
-//     <View style={styles.educationCard}>
-//       <Image
-//         source={education.image}
-//         style={styles.educationImage}
-//         resizeMode="cover"
-//       />
-//       <View style={styles.title}>
-//         <Text style={styles.header}>{education.school}</Text>
-//         <Text style={styles.subHeader}>{education.year}</Text>
-//       </View>
-//       <View style={styles.cardItem}>
-//         <Text style={styles.boldText}>Duration: </Text>
-//         <Text style={styles.normalText}>{education.duration}</Text>
-//       </View>
-//       <View style={styles.cardItem}>
-//         <Text style={styles.boldText}>Grade: </Text>
-//         <Text style={styles.normalText}>{education.grade}</Text>
-//       </View>
-//       <View style={styles.cardContent}>
-//         <Text style={styles.boldText}>Activities: </Text>
-//         <View>
-//           {education.activities.map((activity, i) => (
-//             <Text style={styles.normalText} key={`frame-${i}`}>
-//               {activity}
-//             </Text>
-//           ))}
-//         </View>
-//       </View>
-//       <View style={styles.cardContent}>
-//         <Text style={styles.boldText}>Awards: </Text>
-//         <View>
-//           {education.awards.map((award, i) => (
-//             <Text style={styles.normalText} key={`frame-${i}`}>
-//               {award}
-//             </Text>
-//           ))}
-//         </View>
-//       </View>
-//     </View>
-//   );
-// };
+const EducationFrame = ({
+  element,
+  index,
+}: {
+  element: (typeof educationData | typeof movieData)[0];
+  index: number;
+}) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const translateYAnim = useRef(new Animated.Value(0)).current;
+
+  const handleMouseEnter = () => {
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 1.005,
+        useNativeDriver: true,
+        friction: 8,
+        tension: 100,
+      }),
+      Animated.spring(translateYAnim, {
+        toValue: -8,
+        useNativeDriver: true,
+        friction: 8,
+        tension: 100,
+      }),
+    ]).start();
+  };
+
+  const handleMouseLeave = () => {
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+        friction: 8,
+        tension: 100,
+      }),
+      Animated.spring(translateYAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+        friction: 8,
+        tension: 100,
+      }),
+    ]).start();
+  };
+
+  const badgeMap: Record<string, any> = {
+    tp: require("../assets/cards/education-card-tp.png"),
+    dss: require("../assets/cards/education-card-dss.png"),
+    littlewomen: require("../assets/cards/movie-card-littlewomen.png"),
+    bones: require("../assets/cards/movie-card-bones.png"),
+    substance: require("../assets/cards/movie-card-substance.png"),
+    eternal: require("../assets/cards/movie-card-eternal.png"),
+  };
+
+  return (
+    <Animated.View
+      style={{
+        transform: [{ scale: scaleAnim }, { translateY: translateYAnim }],
+      }}
+      // @ts-ignore - onMouseEnter/Leave work on web but aren't in RN types
+      onMouseEnter={Platform.OS === "web" ? handleMouseEnter : undefined}
+      onMouseLeave={Platform.OS === "web" ? handleMouseLeave : undefined}
+    >
+      <Image
+        source={badgeMap[element.origin]}
+        style={element.styleType === "image" ? styles.image : styles.movieCard}
+        resizeMode="contain"
+      />
+    </Animated.View>
+  );
+};
 
 export function Education() {
   return (
-    // <View style={styles.container}>
-    //   {educationData.map((education, i) => (
-    //     <EducationFrame key={`frame-${i}`} education={education} index={i} />
-    //   ))}
-    // </View>
     <View style={styles.container}>
       <View style={styles.cardRow}>
-        <Image
-          source={require("../assets/cards/education-card-tp.png")}
-          style={styles.image}
-          resizeMode="contain"
-        />
-        <Image
-          source={require("../assets/cards/education-card-dss.png")}
-          style={styles.image}
-          resizeMode="contain"
-        />
+        {educationData.map((education, i) => (
+          <EducationFrame key={`frame-${i}`} element={education} index={i} />
+        ))}
         <View style={styles.image}>
           <View style={styles.cardRow}>
-            <Image
-              source={require("../assets/cards/movie-card-littlewomen.png")}
-              style={styles.movieCard}
-              resizeMode="contain"
-            />
-            <Image
-              source={require("../assets/cards/movie-card-bones.png")}
-              style={styles.movieCard}
-              resizeMode="contain"
-            />
+            {movieData.slice(0, 2).map((movie, i) => (
+              <EducationFrame key={`frame-${i}`} element={movie} index={i} />
+            ))}
           </View>
           <View style={styles.cardRow}>
-            <Image
-              source={require("../assets/cards/movie-card-substance.png")}
-              style={styles.movieCard}
-              resizeMode="contain"
-            />
-            <Image
-              source={require("../assets/cards/movie-card-eternal.png")}
-              style={styles.movieCard}
-              resizeMode="contain"
-            />
+            {movieData.slice(2, 4).map((movie, i) => (
+              <EducationFrame key={`frame-${i}`} element={movie} index={i} />
+            ))}
           </View>
         </View>
       </View>
