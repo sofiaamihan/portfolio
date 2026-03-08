@@ -4,11 +4,11 @@
 // TODO - Publish on github pages
 // TODO - Convert my badges, icons, etc to SVG format
 // TODO - Increase the selection for side navigation
-// TODO - Add inner shadow for side navigation
 // TODO - Implement functionality for bottom navigation
 // TODO - Implement animations
 // TODO - Add the line at the bottom and shift the footer to the end
 // TODO - Set up a splash screen in the future
+// TODO - Converted side navigation to image, but might have adaptability issues
 
 import { About } from "@/components/about";
 import { ContactMe } from "@/components/contact-me";
@@ -23,6 +23,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   Image,
+  ImageBackground,
   Linking,
   Platform,
   SectionList,
@@ -203,7 +204,46 @@ export default function Index() {
                 setSideDimensions({ width, height });
               }}
             >
-              {sideDimensions.width > 0 && sideDimensions.height > 0 && (
+              <ImageBackground
+                source={require("../assets/side-navigation.png")}
+                resizeMode="contain"
+                style={styles.sideNavigationBackground}
+              >
+                <View style={styles.sideNavigationButtonLayout}>
+                  <SideNavigationButton
+                    title="/ home"
+                    isActive={activeSection === 0}
+                    onPress={() => scrollToSection(0)}
+                  />
+                  <SideNavigationButton
+                    title="/ about"
+                    isActive={activeSection === 1}
+                    onPress={() => scrollToSection(1)}
+                  />
+                  <SideNavigationButton
+                    title="/ projects"
+                    isActive={activeSection === 2}
+                    onPress={() => scrollToSection(2)}
+                  />
+                  <SideNavigationButton
+                    title="/ education"
+                    isActive={activeSection === 3}
+                    onPress={() => scrollToSection(3)}
+                  />
+                  <SideNavigationButton
+                    title="/ experiences"
+                    isActive={activeSection === 4}
+                    onPress={() => scrollToSection(4)}
+                  />
+                  <SideNavigationButton
+                    title="/ contact me"
+                    isActive={activeSection === 5}
+                    onPress={() => scrollToSection(5)}
+                  />
+                </View>
+              </ImageBackground>
+
+              {/* {sideDimensions.width > 0 && sideDimensions.height > 0 && (
                 <Svg height="100%" width="100%" style={StyleSheet.absoluteFill}>
                   <Defs>
                     <ClipPath id="clip">
@@ -245,45 +285,15 @@ export default function Index() {
                     clipPath="url(#clip3)"
                   />
                   {/* Potential Fake Inner Shadow*/}
-                  {/* <Polygon
+              {/* <Polygon
                     points={`4,4 ${sideDimensions.width * 0.69},4 ${sideDimensions.width - 4},${sideDimensions.height * 0.1} ${sideDimensions.width - 4},${sideDimensions.height - 4} ${sideDimensions.width * 0.2},${sideDimensions.height - 5} 4,${sideDimensions.height * 0.9}`}
                     fill="none"
                     stroke={DARKEST}
                     strokeWidth="6"
                     strokeOpacity="0.15"
-                  /> */}
+                  /> 
                 </Svg>
-              )}
-              <SideNavigationButton
-                title="/ home"
-                isActive={activeSection === 0}
-                onPress={() => scrollToSection(0)}
-              />
-              <SideNavigationButton
-                title="/ about"
-                isActive={activeSection === 1}
-                onPress={() => scrollToSection(1)}
-              />
-              <SideNavigationButton
-                title="/ projects"
-                isActive={activeSection === 2}
-                onPress={() => scrollToSection(2)}
-              />
-              <SideNavigationButton
-                title="/ education"
-                isActive={activeSection === 3}
-                onPress={() => scrollToSection(3)}
-              />
-              <SideNavigationButton
-                title="/ experiences"
-                isActive={activeSection === 4}
-                onPress={() => scrollToSection(4)}
-              />
-              <SideNavigationButton
-                title="/ contact me"
-                isActive={activeSection === 5}
-                onPress={() => scrollToSection(5)}
-              />
+              )} */}
             </View>
           </View>
           <SectionList
@@ -415,12 +425,21 @@ const styles = StyleSheet.create({
   sideNavigation: {
     // backgroundColor: LIGHT, // Reverts to rectangle
     // margin: 16,
-    padding: 16,
-    paddingTop: 72,
+    // padding: 16,
+    // paddingTop: 72,
     flex: 1,
     // borderColor: DARK,
     // borderWidth: 1, // Reverts to rectangle
     gap: 48,
+  },
+  sideNavigationButtonLayout: {
+    padding: 16,
+    paddingTop: 72,
+    gap: 48,
+  },
+  sideNavigationBackground: {
+    height: "100%",
+    width: 180,
   },
   sideNavigationButtons: {
     backgroundColor: "transparent",
