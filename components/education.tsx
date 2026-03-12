@@ -1,46 +1,73 @@
 import { DARKEST } from "@/constants/constants";
-import { useRef } from "react";
-import { Animated, Image, Platform, StyleSheet, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  Easing,
+  Image,
+  Platform,
+  StyleSheet,
+  View,
+} from "react-native";
 
 const educationData = [
-  {
-    origin: "tp",
-    styleType: "image",
-  },
-  {
-    origin: "dss",
-    styleType: "image",
-  },
+  { origin: "tp", styleType: "image" },
+  { origin: "dss", styleType: "image" },
 ];
 
 const movieData = [
-  {
-    origin: "littlewomen",
-    styleType: "movie",
-  },
-  {
-    origin: "bones",
-    styleType: "movie",
-  },
-  {
-    origin: "substance",
-    styleType: "movie",
-  },
-  {
-    origin: "eternal",
-    styleType: "movie",
-  },
+  { origin: "littlewomen", styleType: "movie" },
+  { origin: "bones", styleType: "movie" },
+  { origin: "substance", styleType: "movie" },
+  { origin: "eternal", styleType: "movie" },
 ];
 
+const badgeMap: Record<string, any> = {
+  tp: require("../assets/cards/education-card-tp.png"),
+  dss: require("../assets/cards/education-card-dss.png"),
+  littlewomen: require("../assets/cards/movie-card-littlewomen.png"),
+  bones: require("../assets/cards/movie-card-bones.png"),
+  substance: require("../assets/cards/movie-card-substance.png"),
+  eternal: require("../assets/cards/movie-card-eternal.png"),
+};
+
+const ALL_CARDS = [...educationData, ...movieData];
 const EducationFrame = ({
   element,
-  index,
+  entranceDelay,
+  triggered,
 }: {
-  element: (typeof educationData | typeof movieData)[0];
-  index: number;
+  element: (typeof ALL_CARDS)[0];
+  entranceDelay: number;
+  triggered: boolean;
 }) => {
+  const entranceOpacity = useRef(new Animated.Value(0)).current;
+  const entranceY = useRef(new Animated.Value(22)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const translateYAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!triggered) {
+      entranceOpacity.setValue(0);
+      entranceY.setValue(22);
+      return;
+    }
+    Animated.parallel([
+      Animated.timing(entranceOpacity, {
+        toValue: 1,
+        duration: 420,
+        delay: entranceDelay,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(entranceY, {
+        toValue: 0,
+        duration: 420,
+        delay: entranceDelay,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [triggered]);
 
   const handleMouseEnter = () => {
     Animated.parallel([
@@ -76,21 +103,16 @@ const EducationFrame = ({
     ]).start();
   };
 
-  const badgeMap: Record<string, any> = {
-    tp: require("../assets/cards/education-card-tp.png"),
-    dss: require("../assets/cards/education-card-dss.png"),
-    littlewomen: require("../assets/cards/movie-card-littlewomen.png"),
-    bones: require("../assets/cards/movie-card-bones.png"),
-    substance: require("../assets/cards/movie-card-substance.png"),
-    eternal: require("../assets/cards/movie-card-eternal.png"),
-  };
-
   return (
     <Animated.View
       style={{
-        transform: [{ scale: scaleAnim }, { translateY: translateYAnim }],
+        opacity: entranceOpacity,
+        transform: [
+          { translateY: Animated.add(entranceY, translateYAnim) },
+          { scale: scaleAnim },
+        ],
       }}
-      // @ts-ignore - onMouseEnter/Leave work on web but aren't in RN types
+      // @ts-ignore
       onMouseEnter={Platform.OS === "web" ? handleMouseEnter : undefined}
       onMouseLeave={Platform.OS === "web" ? handleMouseLeave : undefined}
     >
@@ -103,22 +125,51 @@ const EducationFrame = ({
   );
 };
 
-export function Education() {
+export function Education({ isActive }: { isActive?: boolean }) {
+  const [triggered, setTriggered] = useState(false);
+
+  useEffect(() => {
+    if (isActive && !triggered) {
+      const t = setTimeout(() => setTriggered(true), 80);
+      return () => clearTimeout(t);
+    }
+    if (!isActive) {
+      setTriggered(false);
+    }
+  }, [isActive]);
+
+  const getDelay = (index: number) => index * 150;
+
   return (
     <View style={styles.container}>
       <View style={styles.cardRow}>
-        {educationData.map((education, i) => (
-          <EducationFrame key={`frame-${i}`} element={education} index={i} />
+        {educationData.map((edu, i) => (
+          <EducationFrame
+            key={`edu-${i}`}
+            element={edu}
+            entranceDelay={getDelay(i)}
+            triggered={triggered}
+          />
         ))}
         <View style={styles.image}>
           <View style={styles.cardRow}>
             {movieData.slice(0, 2).map((movie, i) => (
-              <EducationFrame key={`frame-${i}`} element={movie} index={i} />
+              <EducationFrame
+                key={`movie-top-${i}`}
+                element={movie}
+                entranceDelay={getDelay(educationData.length + i)}
+                triggered={triggered}
+              />
             ))}
           </View>
           <View style={styles.cardRow}>
             {movieData.slice(2, 4).map((movie, i) => (
-              <EducationFrame key={`frame-${i}`} element={movie} index={i} />
+              <EducationFrame
+                key={`movie-bot-${i}`}
+                element={movie}
+                entranceDelay={getDelay(educationData.length + 2 + i)}
+                triggered={triggered}
+              />
             ))}
           </View>
         </View>
@@ -139,6 +190,40 @@ const styles = StyleSheet.create({
   movieCard: {
     height: 250,
     width: 200,
+  },
+  container: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  educationCard: {
+    height: "85%",
+    width: "32%",
+    margin: 20,
+    shadowColor: DARKEST,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  educationImage: {
+    height: 200,
+    width: "90%",
+    backgroundColor: DARKEST,
+    marginTop: 20,
+    marginRight: 20,
+    marginLeft: 20,
+  },
+  cardItem: {
+    flexDirection: "row",
+    marginRight: 20,
+    marginLeft: 20,
+    marginBottom: 8,
+    justifyContent: "space-between",
+  },
+  cardContent: {
+    marginRight: 20,
+    marginLeft: 20,
+    marginBottom: 8,
   },
   title: {
     flexDirection: "row",
@@ -166,43 +251,5 @@ const styles = StyleSheet.create({
     fontFamily: "Inconsolata-Bold",
     fontSize: 12,
     color: DARKEST,
-  },
-  container: {
-    flex: 1,
-    flexDirection: "row",
-  },
-  educationCard: {
-    // backgroundColor: POP08,
-    height: "85%",
-    width: "32%",
-    margin: 20,
-    shadowColor: DARKEST,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  educationImage: {
-    height: 200,
-    width: "90%",
-    backgroundColor: DARKEST,
-    marginTop: 20,
-    marginRight: 20,
-    marginLeft: 20,
-  },
-  cardItem: {
-    flexDirection: "row",
-    marginRight: 20,
-    marginLeft: 20,
-    marginBottom: 8,
-    justifyContent: "space-between",
-  },
-  cardContent: {
-    marginRight: 20,
-    marginLeft: 20,
-    marginBottom: 8,
   },
 });
