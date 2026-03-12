@@ -10,7 +10,6 @@
 // TODO - Converted side navigation to image, but might have adaptability issues
 
 import { About } from "@/components/about";
-import { ContactMe } from "@/components/contact-me";
 import { Education } from "@/components/education";
 import { Experiences } from "@/components/experiences";
 import { Home } from "@/components/home";
@@ -114,10 +113,10 @@ const DATA = [
     title: "c: / sofiaamihan@portfolio / experiences",
     data: [{ component: Experiences }],
   },
-  {
-    title: "c: / sofiaamihan@portfolio / contact-me",
-    data: [{ component: ContactMe }],
-  },
+  // {
+  //   title: "c: / sofiaamihan@portfolio / contact-me",
+  //   data: [{ component: ContactMe }],
+  // },
 ];
 
 const DELAYS = {
@@ -311,7 +310,7 @@ export default function Index() {
                     "/ projects",
                     "/ education",
                     "/ experiences",
-                    "/ contact me",
+                    // "/ contact me",
                   ].map((label, i) => (
                     <SideNavigationButton
                       key={label}
