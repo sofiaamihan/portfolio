@@ -9,6 +9,7 @@ import {
   BACKGROUND09,
   DARKEST,
   GITHUBBACKGROUND,
+  PINK,
 } from "@/constants/constants";
 import { useRef } from "react";
 import {
@@ -253,7 +254,7 @@ export function Projects() {
       <View style={styles.filmStripContainer}>
         <ScrollView
           horizontal
-          showsHorizontalScrollIndicator={true}
+          showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
           <View style={styles.filmStrip}>
@@ -280,6 +281,15 @@ export function Projects() {
           </View>
         </ScrollView>
       </View>
+      <View style={[styles.hintContainer]} pointerEvents="none">
+        <View style={styles.hintRow}>
+          <View style={styles.hintDot} />
+          <Text style={styles.hintText}>
+            Scroll sideways to view my Projects
+          </Text>
+        </View>
+        <View style={styles.hintUnderline} />
+      </View>
     </View>
   );
 }
@@ -301,6 +311,7 @@ const styles = StyleSheet.create({
     fontFamily: "Inconsolata-Regular",
     fontSize: 12,
     color: DARKEST,
+    lineHeight: 14,
   },
   filmStripContainer: {
     width: "100%",
@@ -332,7 +343,7 @@ const styles = StyleSheet.create({
     gap: 20,
     marginTop: 20,
     marginBottom: 20,
-    height: 320,
+    height: 340,
   },
   frameWrapper: {
     width: (screenWidth - 140) / 4,
@@ -367,7 +378,7 @@ const styles = StyleSheet.create({
   },
   projectImage: {
     width: "100%",
-    height: 140,
+    height: 160,
     backgroundColor: GITHUBBACKGROUND,
     marginBottom: 8,
     borderRadius: 4,
@@ -381,5 +392,41 @@ const styles = StyleSheet.create({
     width: 100,
     height: 25,
     marginBottom: 4,
+  },
+  hintContainer: {
+    position: "absolute",
+    bottom: 28,
+    left: 24,
+    ...(Platform.OS === "web"
+      ? ({ transition: "opacity 0.5s ease" } as any)
+      : {}),
+  },
+  hintVisible: { opacity: 1 },
+  hintRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 5,
+  },
+  hintDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: PINK,
+    opacity: 0.75,
+  },
+  hintText: {
+    fontFamily: "Inconsolata-Regular",
+    fontSize: 11,
+    color: DARKEST,
+    opacity: 0.5,
+    letterSpacing: 0.3,
+  },
+  hintUnderline: {
+    height: 1,
+    width: 200,
+    backgroundColor: PINK,
+    opacity: 0.2,
+    marginLeft: 14,
   },
 });
