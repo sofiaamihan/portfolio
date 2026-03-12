@@ -1,16 +1,3 @@
-// 1 ---
-// TODO - Screen that says mobile support is coming soon
-// TODO - Publish on github pages
-// TODO - Implement animations
-// TODO - Add the line at the bottom and shift the footer to the end
-// TODO - For web, make everything compact and centred to one view, instead of adapting to abnormal sizes
-// 2 ---
-// TODO - Support mobile
-// TODO - Screen that says this page not found
-// TODO - Convert my badges, icons, etc to SVG format
-// TODO - Set up a splash screen in the future
-// TODO - Converted side navigation to image, but might have adaptability issues
-
 import { About } from "@/components/about";
 import { ContactMe } from "@/components/contact-me";
 import { Education } from "@/components/education";
@@ -346,11 +333,14 @@ export default function Index() {
               renderSectionHeader={({ section: { title } }) => (
                 <Text style={styles.header}>{title}</Text>
               )}
-              renderItem={({ item }) => {
+              renderItem={({ item, section }) => {
                 const Component = item.component;
+                const sectionIndex = DATA.findIndex(
+                  (d) => d.title === section.title,
+                );
                 return (
                   <View style={styles.contentView}>
-                    <Component />
+                    <Component isActive={activeSection === sectionIndex} />
                   </View>
                 );
               }}

@@ -1,18 +1,155 @@
-// TODO - Hovering or clicking on the badge displays relevant information
-// TODO - Animate my profile
-
 import { DARKEST } from "@/constants/constants";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 
-export function About() {
+const BADGE_GROUPS = [
+  {
+    label: "Languages",
+    badges: [
+      require("../assets/badges/javascript.png"),
+      require("../assets/badges/python.png"),
+      require("../assets/badges/kotlin.png"),
+      require("../assets/badges/typescript.png"),
+    ],
+  },
+  {
+    label: "Libraries",
+    badges: [
+      require("../assets/badges/react.png"),
+      require("../assets/badges/selenium.png"),
+      require("../assets/badges/compose.png"),
+      require("../assets/badges/reactnative.png"),
+    ],
+  },
+  {
+    label: "Applications",
+    badges: [
+      require("../assets/badges/postman.png"),
+      require("../assets/badges/jmeter.png"),
+      require("../assets/badges/raspberrypi.png"),
+    ],
+  },
+  {
+    label: "Databases",
+    badges: [
+      require("../assets/badges/mongodb.png"),
+      require("../assets/badges/firebase.png"),
+      require("../assets/badges/room.png"),
+      require("../assets/badges/aws.png"),
+    ],
+  },
+];
+
+const ALL_BADGES = BADGE_GROUPS.flatMap((group, gi) =>
+  group.badges.map((src, bi) => ({ src, groupIndex: gi, badgeIndex: bi })),
+);
+
+function useFadeSlide(delay: number, triggered: boolean) {
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(14)).current;
+
+  useEffect(() => {
+    if (!triggered) return;
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 380,
+        delay,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 380,
+        delay,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [triggered]);
+
+  return { opacity, translateY };
+}
+
+export function About({ isActive }: { isActive?: boolean }) {
+  const [triggered, setTriggered] = useState(false);
+
+  useEffect(() => {
+    if (isActive && !triggered) {
+      const t = setTimeout(() => setTriggered(true), 80);
+      return () => clearTimeout(t);
+    }
+  }, [isActive]);
+
+  const photoAnim = useFadeSlide(0, triggered);
+  const intro = useFadeSlide(180, triggered);
+  const cgpa = useFadeSlide(280, triggered);
+  const techLabel = useFadeSlide(360, triggered);
+  const outro = useFadeSlide(900 + ALL_BADGES.length * 55, triggered);
+
+  const badgeAnims = ALL_BADGES.map((_, i) =>
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useFadeSlide(420 + i * 55, triggered),
+  );
+
+  useEffect(() => {
+    if (!isActive) {
+      [photoAnim, intro, cgpa, techLabel, outro, ...badgeAnims].forEach(
+        ({ opacity, translateY }) => {
+          opacity.setValue(0);
+          translateY.setValue(14);
+        },
+      );
+      setTriggered(false);
+    }
+  }, [isActive]);
+
+  const renderBadgeGroups = () =>
+    BADGE_GROUPS.map((group, gi) => {
+      const groupBadges = ALL_BADGES.filter((b) => b.groupIndex === gi);
+      return (
+        <View key={gi}>
+          <Text style={styles.normalText}>{group.label}</Text>
+          {groupBadges.map((b) => {
+            const flatIndex = ALL_BADGES.indexOf(b);
+            const anim = badgeAnims[flatIndex];
+            return (
+              <Animated.View
+                key={flatIndex}
+                style={{
+                  opacity: anim.opacity,
+                  transform: [{ translateY: anim.translateY }],
+                }}
+              >
+                <Image
+                  style={styles.badge}
+                  resizeMode="contain"
+                  source={b.src}
+                />
+              </Animated.View>
+            );
+          })}
+        </View>
+      );
+    });
+
   return (
     <View style={styles.container}>
-      <View style={styles.imageBox}>
+      <Animated.View
+        style={[
+          styles.imageBox,
+          {
+            opacity: photoAnim.opacity,
+            transform: [{ translateY: photoAnim.translateY }],
+          },
+        ]}
+      >
         <Image
           source={require("../assets/images/profile.png")}
           style={styles.image}
         />
-      </View>
+      </Animated.View>
+
       <View style={styles.textBox}>
         <Text style={styles.normalText}>
           Hi! I&apos;m a <Text style={styles.boldText}>Year 3 Scholar</Text> at
@@ -23,98 +160,11 @@ export function About() {
           ways to integrate creativity into my solutions, as an amateur
           cinephile.
         </Text>
-        <Text style={styles.boldText}>CGPA: 3.95 / 4.0</Text>
+        <Text style={styles.boldText}>CGPA: 3.96 / 4.0</Text>
         <View>
           <Text style={styles.boldText}>Technologies</Text>
-          <View style={styles.technologies}>
-            <View>
-              <Text style={styles.normalText}>Languages</Text>
-              <Image
-                style={styles.badge}
-                source={require("../assets/badges/javascript.png")}
-                resizeMode="contain"
-              />
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/python.png")}
-              />
-              <Image
-                style={styles.badge}
-                source={require("../assets/badges/kotlin.png")}
-                resizeMode="contain"
-              />
-              <Image
-                style={styles.badge}
-                source={require("../assets/badges/typescript.png")}
-                resizeMode="contain"
-              />
-            </View>
-            <View>
-              <Text style={styles.normalText}>Libraries</Text>
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/react.png")}
-              />
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/selenium.png")}
-              />
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/compose.png")}
-              />
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/reactnative.png")}
-              />
-            </View>
-            <View>
-              <Text style={styles.normalText}>Applications</Text>
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/postman.png")}
-              />
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/jmeter.png")}
-              />
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/raspberrypi.png")}
-              />
-            </View>
-            <View>
-              <Text style={styles.normalText}>Databases</Text>
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/mongodb.png")}
-              />
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/firebase.png")}
-              />
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/room.png")}
-              />
-              <Image
-                style={styles.badge}
-                resizeMode="contain"
-                source={require("../assets/badges/aws.png")}
-              />
-            </View>
-          </View>
+
+          <View style={styles.technologies}>{renderBadgeGroups()}</View>
         </View>
         <Text style={styles.normalText}>
           Beyond academics, I have accumulated{" "}
