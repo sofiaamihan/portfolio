@@ -1,12 +1,13 @@
-// TODO - Support mobile
+// 1 ---
 // TODO - Screen that says mobile support is coming soon
-// TODO - Screen that says this page not found
 // TODO - Publish on github pages
-// TODO - Convert my badges, icons, etc to SVG format
-// TODO - Increase the selection for side navigation
 // TODO - Implement functionality for bottom navigation
 // TODO - Implement animations
 // TODO - Add the line at the bottom and shift the footer to the end
+// 2 ---
+// TODO - Support mobile
+// TODO - Screen that says this page not found
+// TODO - Convert my badges, icons, etc to SVG format
 // TODO - Set up a splash screen in the future
 // TODO - Converted side navigation to image, but might have adaptability issues
 
@@ -39,6 +40,7 @@ const { width } = Dimensions.get("window");
 const isWeb = Platform.OS === "web";
 const isDesktop = isWeb && width >= 768;
 
+const SIDE_NAVIGATION_WIDTH = 180;
 const HEADER_HEIGHT = isDesktop ? 80 : 60;
 const FOOTER_HEIGHT = isDesktop ? 40 : 40;
 const SIDE_WIDTH = isDesktop ? 200 : 0; // This does NOT make it disappear lols
@@ -435,15 +437,15 @@ const styles = StyleSheet.create({
   sideNavigationButtonLayout: {
     padding: 16,
     paddingTop: 72,
-    gap: 48,
+    gap: 0,
   },
   sideNavigationBackground: {
     height: "100%",
-    width: 180,
+    width: SIDE_NAVIGATION_WIDTH,
   },
   sideNavigationButtons: {
     backgroundColor: "transparent",
-    alignItems: "flex-start",
+    alignItems: "center",
     // paddingBottom: 48,
     // height: "20%",
   },
@@ -482,14 +484,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: DARKEST,
   },
+  // Change the activeBox and activeBoxVisible styles:
   activeBox: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "100%",
-    paddingVertical: 6,
+    // width: "105%",
+    width: SIDE_NAVIGATION_WIDTH * 0.91,
+    paddingVertical: 26, // taller hit area
     paddingHorizontal: 8,
-    borderRadius: 2,
+    borderRadius: 0, // remove rounding
+    marginHorizontal: -8, // bleed to edges (match your sideNavigationButtonLayout padding)
+    paddingLeft: 16, // re-add left padding for text
+    paddingRight: 16,
   },
   activeBoxVisible: {
     backgroundColor: PINK,
