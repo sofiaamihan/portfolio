@@ -29,25 +29,26 @@ const photos: Record<string, ImageSourcePropType> = {
 };
 
 const logos: Record<string, ImageSourcePropType> = {
-  math: require("../assets/images/logo-pwc.png"),
+  math: require("../assets/images/logo-math.png"),
   lad: require("../assets/images/logo-lad.png"),
   pwc: require("../assets/images/logo-pwc.png"),
-  ekko: require("../assets/images/logo-pwc.png"),
+  ekko: require("../assets/images/logo-ekko.png"),
 };
 
 const experiencesData = [
   {
-    title: "Freelance Maths Tutor",
+    title: "Private Tutor | Applied & Pre-University Mathematics",
     type: "Freelance",
     company: "Self-Employed",
     start: "January 2026",
     end: "Present",
     duration: "2 Months",
     location: "Hybrid",
-    description: "",
+    description:
+      "Teaching Algebra, Functions, Matrices, Trigonometry, and Single-Variable Calculus to equip students with the analytical tools to solve complex problems across multiple mathematical domains in preparation for the University Preparatory Programme in Foundational Mathematics.",
     logoKey: "math",
     photoKey: "math",
-    skills: ["Pure Mathematics"],
+    skills: ["Pure Mathematics", "Teaching"],
   },
   {
     title: "Website Designer and Leader",
