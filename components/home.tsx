@@ -39,43 +39,32 @@ export function Home() {
   const onContextCreate = async (gl: any) => {
     const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
 
-    // Setup scene, camera, renderer
     const scene = new THREE.Scene();
-    // scene.background = new THREE.Color(DARKEST);
     const camera = new THREE.PerspectiveCamera(45, width / height, 1, 4000);
-    camera.position.z = 1750;
+    camera.position.z = 1600; // How far it is
 
     const renderer = new Renderer({ gl });
     renderer.setSize(width, height);
 
-    // Create group for rotation
     const group = new THREE.Group();
     scene.add(group);
     groupRef.current = group;
 
-    // Particle setup - spherical distribution for endless feel
     const maxParticleCount = 1000;
-    let particleCount = 800;
-    const sphereRadius = 1200;
+    let particleCount = 400;
+    const sphereRadius = 600; // Groups together
 
     const particlesData = particlesDataRef.current;
     const particlePositions = new Float32Array(maxParticleCount * 3);
 
-    // Initialize particles in spherical distribution
     for (let i = 0; i < maxParticleCount; i++) {
-      // Random position within sphere
-      // const radius = Math.random() * sphereRadius;
-      const radius = Math.pow(Math.random(), 0.5) * sphereRadius; // Change distribution level, 0.1 means super dispersed
+      const radius = Math.pow(Math.random(), 0.5) * sphereRadius;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
 
-      const x = radius * Math.sin(phi) * Math.cos(theta);
-      const y = radius * Math.sin(phi) * Math.sin(theta);
-      const z = radius * Math.cos(phi);
-
-      particlePositions[i * 3] = x;
-      particlePositions[i * 3 + 1] = y;
-      particlePositions[i * 3 + 2] = z;
+      particlePositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+      particlePositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+      particlePositions[i * 3 + 2] = radius * Math.cos(phi);
 
       particlesData.push({
         velocity: new THREE.Vector3(
@@ -87,7 +76,6 @@ export function Home() {
       });
     }
 
-    // Create point cloud
     const particlesGeometry = new THREE.BufferGeometry();
     particlesGeometry.setAttribute(
       "position",
@@ -104,7 +92,6 @@ export function Home() {
     const pointCloud = new THREE.Points(particlesGeometry, particlesMaterial);
     group.add(pointCloud);
 
-    // Create lines
     const segments = maxParticleCount * maxParticleCount;
     const positions = new Float32Array(segments * 3);
     const colors = new Float32Array(segments * 3);
@@ -125,25 +112,21 @@ export function Home() {
     const linesMesh = new THREE.LineSegments(linesGeometry, linesMaterial);
     group.add(linesMesh);
 
-    // Convert hex colors to RGB values (0-1 range)
     const darkColor = new THREE.Color(PINK);
     const lightColor = new THREE.Color(LIGHTPINK);
 
-    // Animation loop
     const animate = () => {
       requestAnimationFrame(animate);
 
       let vertexpos = 0;
       let colorpos = 0;
       let numConnected = 0;
-      const minDistance = 240; // Adjust this alongside distribution
+      const minDistance = 200; // Adjust this alongside distribution
 
-      // Reset connections
       for (let i = 0; i < particleCount; i++) {
         particlesData[i].numConnections = 0;
       }
 
-      // Update particles and check connections
       for (let i = 0; i < particleCount; i++) {
         const particleData = particlesData[i];
 
@@ -151,24 +134,20 @@ export function Home() {
         particlePositions[i * 3 + 1] += particleData.velocity.y;
         particlePositions[i * 3 + 2] += particleData.velocity.z;
 
-        // Wrap particles around sphere instead of bouncing
         const x = particlePositions[i * 3];
         const y = particlePositions[i * 3 + 1];
         const z = particlePositions[i * 3 + 2];
         const distFromCenter = Math.sqrt(x * x + y * y + z * z);
 
-        // If particle goes too far, wrap it back to the opposite side
         if (distFromCenter > sphereRadius) {
-          const normalizedX = (x / distFromCenter) * sphereRadius * 0.9;
-          const normalizedY = (y / distFromCenter) * sphereRadius * 0.9;
-          const normalizedZ = (z / distFromCenter) * sphereRadius * 0.9;
-
-          particlePositions[i * 3] = -normalizedX;
-          particlePositions[i * 3 + 1] = -normalizedY;
-          particlePositions[i * 3 + 2] = -normalizedZ;
+          const nx = (x / distFromCenter) * sphereRadius * 0.9;
+          const ny = (y / distFromCenter) * sphereRadius * 0.9;
+          const nz = (z / distFromCenter) * sphereRadius * 0.9;
+          particlePositions[i * 3] = -nx;
+          particlePositions[i * 3 + 1] = -ny;
+          particlePositions[i * 3 + 2] = -nz;
         }
 
-        // Check connections with other particles
         for (let j = i + 1; j < particleCount; j++) {
           const dx = particlePositions[i * 3] - particlePositions[j * 3];
           const dy =
@@ -186,12 +165,10 @@ export function Home() {
             positions[vertexpos++] = particlePositions[i * 3];
             positions[vertexpos++] = particlePositions[i * 3 + 1];
             positions[vertexpos++] = particlePositions[i * 3 + 2];
-
             positions[vertexpos++] = particlePositions[j * 3];
             positions[vertexpos++] = particlePositions[j * 3 + 1];
             positions[vertexpos++] = particlePositions[j * 3 + 2];
 
-            // Interpolate between DARK and LIGHT based on distance
             const color = new THREE.Color().lerpColors(
               lightColor,
               darkColor,
@@ -201,7 +178,6 @@ export function Home() {
             colors[colorpos++] = color.r * alpha;
             colors[colorpos++] = color.g * alpha;
             colors[colorpos++] = color.b * alpha;
-
             colors[colorpos++] = color.r * alpha;
             colors[colorpos++] = color.g * alpha;
             colors[colorpos++] = color.b * alpha;
@@ -214,13 +190,13 @@ export function Home() {
       linesMesh.geometry.setDrawRange(0, numConnected * 2);
       linesMesh.geometry.attributes.position.needsUpdate = true;
       linesMesh.geometry.attributes.color.needsUpdate = true;
-
       pointCloud.geometry.attributes.position.needsUpdate = true;
 
-      // Apply user rotation
       group.rotation.x = rotationRef.current.x;
       group.rotation.y = rotationRef.current.y;
 
+      rotationRef.current.y += 0.001; // horizontal spin speed
+      rotationRef.current.x += 0.0005; // gentle tilt speed
       renderer.render(scene, camera);
       gl.endFrameEXP();
     };
@@ -239,12 +215,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    height: "100%",
-    // backgroundColor: DARKEST, // Theres really cool particles flying around but theyre too bright
+    overflow: "hidden",
   },
   glView: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
+    ...StyleSheet.absoluteFillObject,
   },
 });
