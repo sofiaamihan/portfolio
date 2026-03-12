@@ -37,7 +37,7 @@ import Svg, { ClipPath, Defs, Polygon, Rect } from "react-native-svg";
 const { width } = Dimensions.get("window");
 const isWeb = Platform.OS === "web";
 const isDesktop = isWeb && width >= 768;
-const isMobile = isWeb && width < 768;
+const isMobile = width < 740;
 const SIDE_NAVIGATION_WIDTH = 180;
 const HEADER_HEIGHT = isDesktop ? 80 : 60;
 const FOOTER_HEIGHT = isDesktop ? 40 : 40;
