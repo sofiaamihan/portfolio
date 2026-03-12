@@ -29,22 +29,30 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Svg, { ClipPath, Defs, Polygon, Rect } from "react-native-svg";
 
 const { width } = Dimensions.get("window");
-const isWeb = Platform.OS === "web";
-const isDesktop = isWeb && width >= 768;
-const isMobile = width < 740;
+// const { width } = Dimensions.get("window");
+// const isWeb = Platform.OS === "web";
+// const isDesktop = isWeb && width >= 768;
+// const isMobile = width < 740;
+// const SIDE_NAVIGATION_WIDTH = 180;
+// const HEADER_HEIGHT = isDesktop ? 80 : 60;
+// const FOOTER_HEIGHT = isDesktop ? 40 : 40;
+// const SIDE_WIDTH = isDesktop ? 200 : 0;
+// const getContentHeight = () => {
+//   return Dimensions.get("window").height - HEADER_HEIGHT - FOOTER_HEIGHT;
+// };
 const SIDE_NAVIGATION_WIDTH = 180;
-const HEADER_HEIGHT = isDesktop ? 80 : 60;
-const FOOTER_HEIGHT = isDesktop ? 40 : 40;
-const SIDE_WIDTH = isDesktop ? 200 : 0;
-const getContentHeight = () => {
-  return Dimensions.get("window").height - HEADER_HEIGHT - FOOTER_HEIGHT;
-};
+const HEADER_HEIGHT = 80;
+const FOOTER_HEIGHT = 40;
+const SIDE_WIDTH = 200;
+const getContentHeight = () =>
+  Dimensions.get("window").height - HEADER_HEIGHT - FOOTER_HEIGHT;
 
 // Helper: create a fade + slide-up animation
 function useEntranceAnim(delay: number, ready: boolean) {
@@ -129,6 +137,10 @@ const DELAYS = {
 };
 
 export default function Index() {
+  const { width } = useWindowDimensions();
+  const isWeb = Platform.OS === "web";
+  const isDesktop = isWeb && width >= 768;
+  const isMobile = width < 740;
   const sectionListRef = useRef<SectionList>(null);
   const [sideDimensions, setSideDimensions] = useState({ width: 0, height: 0 });
   const [activeSection, setActiveSection] = useState(0);
