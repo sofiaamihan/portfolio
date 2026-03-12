@@ -1,5 +1,4 @@
 // 1 ---
-// TODO - Screen that says mobile support is coming soon
 // TODO - Publish on github pages
 // TODO - Add the line at the bottom and shift the footer to the end
 // 2 ---
@@ -38,7 +37,7 @@ import Svg, { ClipPath, Defs, Polygon, Rect } from "react-native-svg";
 const { width } = Dimensions.get("window");
 const isWeb = Platform.OS === "web";
 const isDesktop = isWeb && width >= 768;
-
+const isMobile = isWeb && width < 768;
 const SIDE_NAVIGATION_WIDTH = 180;
 const HEADER_HEIGHT = isDesktop ? 80 : 60;
 const FOOTER_HEIGHT = isDesktop ? 40 : 40;
@@ -213,6 +212,17 @@ export default function Index() {
   return (
     <SafeAreaProvider>
       <SafeAreaView edges={["top"]} style={styles.mainView}>
+        {isMobile && (
+          <View style={styles.mobileOverlay}>
+            <View style={styles.mobileOverlayCard}>
+              <Text style={styles.mobileOverlayTitle}>Desktop Only</Text>
+              <Text style={styles.mobileOverlayText}>
+                Mobile support is a work in progress.{"\n"}
+                Please view this on a computer for the full experience.
+              </Text>
+            </View>
+          </View>
+        )}
         <Animated.View
           style={[
             styles.headerView,
@@ -542,5 +552,35 @@ const styles = StyleSheet.create({
   },
   bottomNavigationRight: {
     paddingRight: 48,
+  },
+  mobileOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 9999,
+    backgroundColor: "rgba(0,0,0,0.55)",
+    backdropFilter: "blur(12px)", // web only
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  mobileOverlayCard: {
+    backgroundColor: BACKGROUND,
+    borderLeftWidth: 3,
+    borderLeftColor: PINK,
+    padding: 32,
+    margin: 24,
+    maxWidth: 320,
+    gap: 12,
+    alignItems: "center",
+  },
+  mobileOverlayTitle: {
+    fontFamily: "Inconsolata-Bold",
+    fontSize: 18,
+    color: DARKEST,
+  },
+  mobileOverlayText: {
+    fontFamily: "Inconsolata-Regular",
+    fontSize: 13,
+    color: DARKEST,
+    textAlign: "center",
+    lineHeight: 20,
   },
 });
