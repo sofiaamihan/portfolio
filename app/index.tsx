@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   },
   sideNavigationButtonLayout: {
     padding: 16,
-    paddingTop: 72,
+    paddingTop: 92,
     gap: 0,
   },
   sideNavigationBackground: {

@@ -24,7 +24,7 @@ const TOOLTIP_NODES = [
   },
   {
     title: "Activation → Human Emotion",
-    body: "A neuron 'fires' when its inputs exceed a threshold. A film moment lands when accumulated tension, music, and performance cross the audience's emotional threshold simultaneously.",
+    body: "A neuron fires when its inputs exceed a threshold. A film moment lands when accumulated tension, music, and performance cross the audience's emotional threshold simultaneously.",
   },
   {
     title: "Training → Genre Memory",
@@ -59,10 +59,8 @@ export function Home() {
       onPanResponderMove: (evt) => {
         const deltaX = evt.nativeEvent.pageX - lastTouchRef.current.x;
         const deltaY = evt.nativeEvent.pageY - lastTouchRef.current.y;
-
         rotationRef.current.y += deltaX * 0.005;
         rotationRef.current.x += deltaY * 0.005;
-
         lastTouchRef.current = {
           x: evt.nativeEvent.pageX,
           y: evt.nativeEvent.pageY,
@@ -76,7 +74,7 @@ export function Home() {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 1, 4000);
-    camera.position.z = 1600; // How far it is
+    camera.position.z = 1600;
 
     const renderer = new Renderer({ gl });
     renderer.setSize(width, height);
@@ -87,21 +85,18 @@ export function Home() {
 
     const maxParticleCount = 1000;
     let particleCount = 120;
-    const sphereRadius = 600; // Groups together
+    const sphereRadius = 600;
 
     const particlesData = particlesDataRef.current;
     const particlePositions = new Float32Array(maxParticleCount * 3);
 
     for (let i = 0; i < maxParticleCount; i++) {
-      // Uniform surface-biased distribution — particles spread to edges, not center
       const radius = sphereRadius * (0.3 + Math.random() * 0.7);
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
-
       particlePositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
       particlePositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
       particlePositions[i * 3 + 2] = radius * Math.cos(phi);
-
       particlesData.push({
         velocity: new THREE.Vector3(
           (-0.5 + Math.random()) * 0.4,
@@ -124,7 +119,6 @@ export function Home() {
       size: 3,
       transparent: true,
     });
-
     const pointCloud = new THREE.Points(particlesGeometry, particlesMaterial);
     group.add(pointCloud);
 
@@ -144,37 +138,61 @@ export function Home() {
       vertexColors: true,
       transparent: true,
     });
-
     const linesMesh = new THREE.LineSegments(linesGeometry, linesMaterial);
     group.add(linesMesh);
 
     const darkColor = new THREE.Color(PINK);
     const lightColor = new THREE.Color(LIGHTPINK);
 
+    // Glowing hub dots
+    const hubPositions = new Float32Array(maxParticleCount * 3);
+    const hubGeometry = new THREE.BufferGeometry();
+    hubGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(hubPositions, 3),
+    );
+    hubGeometry.setDrawRange(0, 0);
+
+    const hubMaterial = new THREE.PointsMaterial({
+      color: new THREE.Color(PINK),
+      size: 20,
+      transparent: true,
+      opacity: 0.5,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    group.add(new THREE.Points(hubGeometry, hubMaterial));
+
+    const hubCoreMaterial = new THREE.PointsMaterial({
+      color: new THREE.Color(LIGHTPINK),
+      size: 7,
+      transparent: true,
+      opacity: 0.95,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    group.add(new THREE.Points(hubGeometry, hubCoreMaterial));
+
     const animate = () => {
       requestAnimationFrame(animate);
-
-      let vertexpos = 0;
-      let colorpos = 0;
-      let numConnected = 0;
+      let vertexpos = 0,
+        colorpos = 0,
+        numConnected = 0;
       const minDistance = 350;
 
-      for (let i = 0; i < particleCount; i++) {
+      for (let i = 0; i < particleCount; i++)
         particlesData[i].numConnections = 0;
-      }
 
       for (let i = 0; i < particleCount; i++) {
         const particleData = particlesData[i];
-
         particlePositions[i * 3] += particleData.velocity.x;
         particlePositions[i * 3 + 1] += particleData.velocity.y;
         particlePositions[i * 3 + 2] += particleData.velocity.z;
 
-        const x = particlePositions[i * 3];
-        const y = particlePositions[i * 3 + 1];
-        const z = particlePositions[i * 3 + 2];
+        const x = particlePositions[i * 3],
+          y = particlePositions[i * 3 + 1],
+          z = particlePositions[i * 3 + 2];
         const distFromCenter = Math.sqrt(x * x + y * y + z * z);
-
         if (distFromCenter > sphereRadius) {
           const nx = (x / distFromCenter) * sphereRadius * 0.9;
           const ny = (y / distFromCenter) * sphereRadius * 0.9;
@@ -191,33 +209,27 @@ export function Home() {
           const dz =
             particlePositions[i * 3 + 2] - particlePositions[j * 3 + 2];
           const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
           if (dist < minDistance) {
             particleData.numConnections++;
             particlesData[j].numConnections++;
-
             const alpha = 1.0 - dist / minDistance;
-
             positions[vertexpos++] = particlePositions[i * 3];
             positions[vertexpos++] = particlePositions[i * 3 + 1];
             positions[vertexpos++] = particlePositions[i * 3 + 2];
             positions[vertexpos++] = particlePositions[j * 3];
             positions[vertexpos++] = particlePositions[j * 3 + 1];
             positions[vertexpos++] = particlePositions[j * 3 + 2];
-
             const color = new THREE.Color().lerpColors(
               lightColor,
               darkColor,
               1 - alpha,
             );
-
             colors[colorpos++] = color.r * alpha;
             colors[colorpos++] = color.g * alpha;
             colors[colorpos++] = color.b * alpha;
             colors[colorpos++] = color.r * alpha;
             colors[colorpos++] = color.g * alpha;
             colors[colorpos++] = color.b * alpha;
-
             numConnected++;
           }
         }
@@ -228,10 +240,27 @@ export function Home() {
       linesMesh.geometry.attributes.color.needsUpdate = true;
       pointCloud.geometry.attributes.position.needsUpdate = true;
 
-      // Adjust rotation
+      const totalConnections = particlesData
+        .slice(0, particleCount)
+        .reduce((s, p) => s + p.numConnections, 0);
+      const hubThreshold = Math.max(
+        2,
+        (totalConnections / particleCount) * 1.4,
+      );
+      let hubCount = 0;
+      for (let i = 0; i < particleCount; i++) {
+        if (particlesData[i].numConnections >= hubThreshold) {
+          hubPositions[hubCount * 3] = particlePositions[i * 3];
+          hubPositions[hubCount * 3 + 1] = particlePositions[i * 3 + 1];
+          hubPositions[hubCount * 3 + 2] = particlePositions[i * 3 + 2];
+          hubCount++;
+        }
+      }
+      hubGeometry.setDrawRange(0, hubCount);
+      hubGeometry.attributes.position.needsUpdate = true;
+
       rotationRef.current.y += 0.0008;
       rotationRef.current.x += 0.0003;
-
       group.rotation.x = rotationRef.current.x;
       group.rotation.y = rotationRef.current.y;
 
@@ -246,10 +275,8 @@ export function Home() {
 
   useEffect(() => {
     if (Platform.OS !== "web") return;
-    const el = containerRef.current;
-    if (!el) return;
-
-    const domNode: HTMLElement = el;
+    const domNode: HTMLElement = containerRef.current;
+    if (!domNode) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
@@ -258,11 +285,7 @@ export function Home() {
         const node =
           TOOLTIP_NODES[tooltipIndexRef.current % TOOLTIP_NODES.length];
         tooltipIndexRef.current += 1;
-        setTooltip({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-          node,
-        });
+        setTooltip({ x: e.clientX - rect.left, y: e.clientY - rect.top, node });
       }, 500);
     };
 
@@ -286,6 +309,15 @@ export function Home() {
       {...panResponder.panHandlers}
     >
       <GLView style={styles.glView} onContextCreate={onContextCreate} />
+      <View style={[styles.hintContainer]} pointerEvents="none">
+        <View style={styles.hintRow}>
+          <View style={styles.hintDot} />
+          <Text style={styles.hintText}>
+            Hover to explore how Neural Networks relate to Film Analysis
+          </Text>
+        </View>
+        <View style={styles.hintUnderline} />
+      </View>
 
       {tooltip && (
         <View
@@ -312,6 +344,42 @@ const styles = StyleSheet.create({
   },
   glView: {
     ...StyleSheet.absoluteFillObject,
+  },
+  hintContainer: {
+    position: "absolute",
+    bottom: 28,
+    left: 24,
+    ...(Platform.OS === "web"
+      ? ({ transition: "opacity 0.5s ease" } as any)
+      : {}),
+  },
+  hintVisible: { opacity: 1 },
+  hintRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 5,
+  },
+  hintDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: PINK,
+    opacity: 0.75,
+  },
+  hintText: {
+    fontFamily: "Inconsolata-Regular",
+    fontSize: 11,
+    color: DARKEST,
+    opacity: 0.5,
+    letterSpacing: 0.3,
+  },
+  hintUnderline: {
+    height: 1,
+    width: 340,
+    backgroundColor: PINK,
+    opacity: 0.2,
+    marginLeft: 14,
   },
   tooltip: {
     position: "absolute",
