@@ -1,9 +1,9 @@
 // 1 ---
 // TODO - Screen that says mobile support is coming soon
 // TODO - Publish on github pages
-// TODO - Implement functionality for bottom navigation
 // TODO - Implement animations
 // TODO - Add the line at the bottom and shift the footer to the end
+// TODO - For web, make everything compact and centred to one view, instead of adapting to abnormal sizes
 // 2 ---
 // TODO - Support mobile
 // TODO - Screen that says this page not found
@@ -22,7 +22,9 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef, useState } from "react";
 import {
+  Animated,
   Dimensions,
+  Easing,
   Image,
   ImageBackground,
   Linking,
@@ -43,10 +45,38 @@ const isDesktop = isWeb && width >= 768;
 const SIDE_NAVIGATION_WIDTH = 180;
 const HEADER_HEIGHT = isDesktop ? 80 : 60;
 const FOOTER_HEIGHT = isDesktop ? 40 : 40;
-const SIDE_WIDTH = isDesktop ? 200 : 0; // This does NOT make it disappear lols
+const SIDE_WIDTH = isDesktop ? 200 : 0;
 const getContentHeight = () => {
   return Dimensions.get("window").height - HEADER_HEIGHT - FOOTER_HEIGHT;
 };
+
+// Helper: create a fade + slide-up animation
+function useEntranceAnim(delay: number, ready: boolean) {
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(16)).current;
+
+  useEffect(() => {
+    if (!ready) return;
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 420,
+        delay,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 420,
+        delay,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [ready]);
+
+  return { opacity, translateY };
+}
 
 interface SideNavigationButtonProps {
   title: string;
@@ -61,7 +91,6 @@ const SideNavigationButton: React.FC<SideNavigationButtonProps> = ({
 }) => {
   return (
     <TouchableOpacity style={[styles.sideNavigationButtons]} onPress={onPress}>
-      {/* {isActive && <View style={styles.activeIndicator} />} */}
       <View style={[styles.activeBox, isActive && styles.activeBoxVisible]}>
         <Text style={styles.subHeader}>{title}</Text>
         {isActive && (
@@ -73,14 +102,8 @@ const SideNavigationButton: React.FC<SideNavigationButtonProps> = ({
 };
 
 const DATA = [
-  {
-    title: "",
-    data: [{ component: Home }],
-  },
-  {
-    title: "c: / sofiaamihan@portfolio / about",
-    data: [{ component: About }],
-  },
+  { title: "", data: [{ component: Home }] },
+  { title: "c: / sofiaamihan@portfolio / about", data: [{ component: About }] },
   {
     title: "c: / sofiaamihan@portfolio / projects",
     data: [{ component: Projects }],
@@ -99,15 +122,32 @@ const DATA = [
   },
 ];
 
+const DELAYS = {
+  background: 0,
+  header: 100,
+  icons: 220,
+  sideNav: 380,
+  content: 520,
+  bottomBar: 640,
+  footer: 760,
+};
+
 export default function Index() {
   const sectionListRef = useRef<SectionList>(null);
-  const [sideHeight, setSideHeight] = useState(0); // Invalid hook call keeps appearing
   const [sideDimensions, setSideDimensions] = useState({ width: 0, height: 0 });
   const [activeSection, setActiveSection] = useState(0);
   const [bottomDimensions, setBottomDimensions] = useState({
     width: 0,
     height: 0,
   });
+  const [animReady, setAnimReady] = useState(false);
+
+  const headerAnim = useEntranceAnim(DELAYS.header, animReady);
+  const iconsAnim = useEntranceAnim(DELAYS.icons, animReady);
+  const sideNavAnim = useEntranceAnim(DELAYS.sideNav, animReady);
+  const contentAnim = useEntranceAnim(DELAYS.content, animReady);
+  const bottomBarAnim = useEntranceAnim(DELAYS.bottomBar, animReady);
+  const footerAnim = useEntranceAnim(DELAYS.footer, animReady);
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
@@ -140,7 +180,6 @@ export default function Index() {
 
   useEffect(() => {
     if (!isWeb) return;
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowUp") {
         event.preventDefault();
@@ -160,7 +199,6 @@ export default function Index() {
         scrollToSection(0);
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
@@ -168,17 +206,34 @@ export default function Index() {
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
+      const timer = setTimeout(() => setAnimReady(true), 60);
+      return () => clearTimeout(timer);
     }
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  if (!fontsLoaded) return null;
+
   return (
     <SafeAreaProvider>
       <SafeAreaView edges={["top"]} style={styles.mainView}>
-        <View style={styles.headerView}>
-          <View style={styles.headerIcons}>
+        <Animated.View
+          style={[
+            styles.headerView,
+            {
+              opacity: headerAnim.opacity,
+              transform: [{ translateY: headerAnim.translateY }],
+            },
+          ]}
+        >
+          <Animated.View
+            style={[
+              styles.headerIcons,
+              {
+                opacity: iconsAnim.opacity,
+                transform: [{ translateY: iconsAnim.translateY }],
+              },
+            ]}
+          >
             <TouchableOpacity
               onPress={() =>
                 Linking.openURL(
@@ -189,18 +244,16 @@ export default function Index() {
               <Image
                 style={{ width: 20, height: 20 }}
                 source={require("../assets/linkedin.png")}
-              ></Image>
+              />
             </TouchableOpacity>
-
             <TouchableOpacity
               onPress={() => Linking.openURL("https://github.com/sofiaamihan")}
             >
               <Image
                 style={{ width: 24, height: 24 }}
                 source={require("../assets/github.png")}
-              ></Image>
+              />
             </TouchableOpacity>
-
             <TouchableOpacity
               onPress={() =>
                 Linking.openURL("mailto:sofiaamihanmrespeto@gmail.com")
@@ -209,7 +262,7 @@ export default function Index() {
               <Image
                 style={{ width: 28, height: 28 }}
                 source={require("../assets/email.png")}
-              ></Image>
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => Linking.openURL("https://letterboxd.com/ihaami/")}
@@ -217,15 +270,30 @@ export default function Index() {
               <Image
                 style={{ width: 30, height: 30 }}
                 source={require("../assets/letterboxd.png")}
-              ></Image>
+              />
             </TouchableOpacity>
-          </View>
+          </Animated.View>
 
           <Text style={styles.header}>Sofia Amihan</Text>
-        </View>
+        </Animated.View>
 
         <View style={styles.middleView}>
-          <View style={styles.sideView}>
+          <Animated.View
+            style={[
+              styles.sideView,
+              {
+                opacity: sideNavAnim.opacity,
+                transform: [
+                  {
+                    translateX: Animated.multiply(
+                      sideNavAnim.translateY,
+                      new Animated.Value(-1),
+                    ),
+                  },
+                ],
+              },
+            ]}
+          >
             <View
               style={styles.sideNavigation}
               onLayout={(event) => {
@@ -239,138 +307,91 @@ export default function Index() {
                 style={styles.sideNavigationBackground}
               >
                 <View style={styles.sideNavigationButtonLayout}>
-                  <SideNavigationButton
-                    title="/ home"
-                    isActive={activeSection === 0}
-                    onPress={() => scrollToSection(0)}
-                  />
-                  <SideNavigationButton
-                    title="/ about"
-                    isActive={activeSection === 1}
-                    onPress={() => scrollToSection(1)}
-                  />
-                  <SideNavigationButton
-                    title="/ projects"
-                    isActive={activeSection === 2}
-                    onPress={() => scrollToSection(2)}
-                  />
-                  <SideNavigationButton
-                    title="/ education"
-                    isActive={activeSection === 3}
-                    onPress={() => scrollToSection(3)}
-                  />
-                  <SideNavigationButton
-                    title="/ experiences"
-                    isActive={activeSection === 4}
-                    onPress={() => scrollToSection(4)}
-                  />
-                  <SideNavigationButton
-                    title="/ contact me"
-                    isActive={activeSection === 5}
-                    onPress={() => scrollToSection(5)}
-                  />
+                  {[
+                    "/ home",
+                    "/ about",
+                    "/ projects",
+                    "/ education",
+                    "/ experiences",
+                    "/ contact me",
+                  ].map((label, i) => (
+                    <SideNavigationButton
+                      key={label}
+                      title={label}
+                      isActive={activeSection === i}
+                      onPress={() => scrollToSection(i)}
+                    />
+                  ))}
                 </View>
               </ImageBackground>
-
-              {/* {sideDimensions.width > 0 && sideDimensions.height > 0 && (
-                <Svg height="100%" width="100%" style={StyleSheet.absoluteFill}>
-                  <Defs>
-                    <ClipPath id="clip">
-                      <Polygon
-                        points={`0,0 ${sideDimensions.width * 0.7},0 ${sideDimensions.width},${sideDimensions.height * 0.1} ${sideDimensions.width},${sideDimensions.height} ${sideDimensions.width * 0.2},${sideDimensions.height} 0,${sideDimensions.height * 0.9}`}
-                      />
-                    </ClipPath>
-                  </Defs>
-                  <Rect
-                    width="100%"
-                    height="100%"
-                    fill={PINK80}
-                    clipPath="url(#clip)"
-                  />
-                  <Defs>
-                    <ClipPath id="clip2">
-                      <Polygon
-                        points={`2,2 ${sideDimensions.width * 0.695},2 ${sideDimensions.width - 2},${sideDimensions.height * 0.1} ${sideDimensions.width - 2},${sideDimensions.height - 2} ${sideDimensions.width * 0.2},${sideDimensions.height - 2.5} 2,${sideDimensions.height * 0.9}`}
-                      />
-                    </ClipPath>
-                  </Defs>
-                  <Rect
-                    width="100%"
-                    height="100%"
-                    fill={BACKGROUND}
-                    clipPath="url(#clip2)"
-                  />
-                  <Defs>
-                    <ClipPath id="clip3">
-                      <Polygon
-                        points={`4,4 ${sideDimensions.width * 0.69},4 ${sideDimensions.width - 4},${sideDimensions.height * 0.1} ${sideDimensions.width - 4},${sideDimensions.height - 4} ${sideDimensions.width * 0.2},${sideDimensions.height - 5} 4,${sideDimensions.height * 0.9}`}
-                      />
-                    </ClipPath>
-                  </Defs>
-                  <Rect
-                    width="100%"
-                    height="100%"
-                    fill={PINK80}
-                    clipPath="url(#clip3)"
-                  />
-                  {/* Potential Fake Inner Shadow*/}
-              {/* <Polygon
-                    points={`4,4 ${sideDimensions.width * 0.69},4 ${sideDimensions.width - 4},${sideDimensions.height * 0.1} ${sideDimensions.width - 4},${sideDimensions.height - 4} ${sideDimensions.width * 0.2},${sideDimensions.height - 5} 4,${sideDimensions.height * 0.9}`}
-                    fill="none"
-                    stroke={DARKEST}
-                    strokeWidth="6"
-                    strokeOpacity="0.15"
-                  /> 
-                </Svg>
-              )} */}
             </View>
-          </View>
-          <SectionList
-            ref={sectionListRef}
-            style={styles.sectionView}
-            sections={DATA}
-            onViewableItemsChanged={onViewableItemsChanged}
-            viewabilityConfig={viewabilityConfig}
-            keyExtractor={(item, index) => index.toString()}
-            renderSectionHeader={({ section: { title } }) => (
-              <Text style={styles.header}>{title}</Text>
-            )}
-            renderItem={({ item }) => {
-              const Component = item.component;
-              return (
-                <View style={styles.contentView}>
-                  <Component />
-                </View>
-              );
-            }}
-            snapToInterval={getContentHeight()}
-            decelerationRate="fast"
-            snapToAlignment="start"
-          />
-          <View
-            style={styles.bottomNavigation}
-            onLayout={(event) => {
-              const { height, width } = event.nativeEvent.layout;
-              setBottomDimensions({ width, height });
-            }}
+          </Animated.View>
+
+          <Animated.View
+            style={[
+              { flex: 1 },
+              {
+                opacity: contentAnim.opacity,
+                transform: [{ translateY: contentAnim.translateY }],
+              },
+            ]}
           >
-            {bottomDimensions.width > 0 && bottomDimensions.height > 0 && (
-              <Svg height="100%" width="100%" style={StyleSheet.absoluteFill}>
-                <Defs>
-                  <ClipPath id="clipBottom">
-                    <Polygon
-                      points={`0,0 ${bottomDimensions.width},0 ${bottomDimensions.width * 0.95},${bottomDimensions.height} 0,${bottomDimensions.height}`}
-                    />
-                  </ClipPath>
-                </Defs>
-                <Rect
-                  width="100%"
-                  height="100%"
-                  fill={PINK80}
-                  clipPath="url(#clipBottom)"
-                />
-              </Svg>
-            )}
+            <SectionList
+              ref={sectionListRef}
+              style={styles.sectionView}
+              sections={DATA}
+              onViewableItemsChanged={onViewableItemsChanged}
+              viewabilityConfig={viewabilityConfig}
+              keyExtractor={(item, index) => index.toString()}
+              renderSectionHeader={({ section: { title } }) => (
+                <Text style={styles.header}>{title}</Text>
+              )}
+              renderItem={({ item }) => {
+                const Component = item.component;
+                return (
+                  <View style={styles.contentView}>
+                    <Component />
+                  </View>
+                );
+              }}
+              snapToInterval={getContentHeight()}
+              decelerationRate="fast"
+              snapToAlignment="start"
+            />
+          </Animated.View>
+        </View>
+
+        <Animated.View
+          style={[
+            styles.bottomNavigation,
+            {
+              opacity: bottomBarAnim.opacity,
+              transform: [{ translateY: bottomBarAnim.translateY }],
+            },
+          ]}
+          onLayout={(event) => {
+            const { height, width } = event.nativeEvent.layout;
+            setBottomDimensions({ width, height });
+          }}
+        >
+          {bottomDimensions.width > 0 && bottomDimensions.height > 0 && (
+            <Svg height="100%" width="100%" style={StyleSheet.absoluteFill}>
+              <Defs>
+                <ClipPath id="clipBottom">
+                  <Polygon
+                    points={`0,0 ${bottomDimensions.width},0 ${bottomDimensions.width * 0.95},${bottomDimensions.height} 0,${bottomDimensions.height}`}
+                  />
+                </ClipPath>
+              </Defs>
+              <Rect
+                width="100%"
+                height="100%"
+                fill={PINK80}
+                clipPath="url(#clipBottom)"
+              />
+            </Svg>
+          )}
+          <View style={styles.bottomNavigationInner}>
             <View style={styles.bottomNavigationLeft}>
               <Text style={styles.subHeader2}>[ ⬆ / ⬇ ] Navigate</Text>
               <Text style={styles.subHeader2}>[ ESC ] Home</Text>
@@ -381,42 +402,21 @@ export default function Index() {
               </Text>
             </View>
           </View>
-        </View>
+        </Animated.View>
 
-        <View style={styles.footerView}>
+        <Animated.View
+          style={[
+            styles.footerView,
+            {
+              opacity: footerAnim.opacity,
+              transform: [{ translateY: footerAnim.translateY }],
+            },
+          ]}
+        >
           <Text style={styles.normalText}>
             Build and Designed by Sofia Amihan. All rights reserved. ©
           </Text>
-          {/* <Text style={styles.normalText}>All rights reserved. ©</Text> */}
-          {/* <Svg
-            height="40"
-            width="100%"
-            viewBox="0 0 100 20"
-            preserveAspectRatio="none"
-          >
-            <Path
-              d="M 0,0 L 3,20"
-              fill="none"
-              stroke="#957c63"
-              strokeWidth="3"
-              vectorEffect="non-scaling-stroke"
-            />
-            <Path
-              d="M 2.8,20 L 97.2,20 "
-              fill="none"
-              stroke="#957c63"
-              strokeWidth="5"
-              vectorEffect="non-scaling-stroke"
-            />
-            <Path
-              d="M 97,20 L 100,0"
-              fill="none"
-              stroke="#957c63"
-              strokeWidth="3"
-              vectorEffect="non-scaling-stroke"
-            />
-          </Svg> */}
-        </View>
+        </Animated.View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -436,10 +436,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   footerView: {
-    backgroundColor: "transparent", // This does not work because it's not layered over the content
+    backgroundColor: "transparent",
     height: FOOTER_HEIGHT,
     padding: 8,
-    // justifyContent: "center",
     alignItems: "center",
   },
   middleView: {
@@ -452,13 +451,7 @@ const styles = StyleSheet.create({
     width: SIDE_WIDTH,
   },
   sideNavigation: {
-    // backgroundColor: LIGHT, // Reverts to rectangle
-    // margin: 16,
-    // padding: 16,
-    // paddingTop: 72,
     flex: 1,
-    // borderColor: DARK,
-    // borderWidth: 1, // Reverts to rectangle
     gap: 48,
   },
   sideNavigationButtonLayout: {
@@ -473,8 +466,6 @@ const styles = StyleSheet.create({
   sideNavigationButtons: {
     backgroundColor: "transparent",
     alignItems: "center",
-    // paddingBottom: 48,
-    // height: "20%",
   },
   sectionView: {
     flex: 1,
@@ -482,12 +473,11 @@ const styles = StyleSheet.create({
   },
   contentView: {
     flex: 1,
-    // margin: 28,
     minHeight: getContentHeight(),
     paddingBottom: 64,
   },
   headerIcons: {
-    flexDirection: "row", // Make the icons have the same thickness as the header
+    flexDirection: "row",
     gap: 16,
     alignItems: "center",
   },
@@ -511,18 +501,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: DARKEST,
   },
-  // Change the activeBox and activeBoxVisible styles:
   activeBox: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    // width: "105%",
     width: SIDE_NAVIGATION_WIDTH * 0.91,
-    paddingVertical: 26, // taller hit area
+    paddingVertical: 26,
     paddingHorizontal: 8,
-    borderRadius: 0, // remove rounding
-    marginHorizontal: -8, // bleed to edges (match your sideNavigationButtonLayout padding)
-    paddingLeft: 16, // re-add left padding for text
+    borderRadius: 0,
+    marginHorizontal: -8,
+    paddingLeft: 16,
     paddingRight: 16,
   },
   activeBoxVisible: {
@@ -534,17 +522,19 @@ const styles = StyleSheet.create({
   },
   bottomNavigation: {
     position: "absolute",
-    bottom: 16,
+    bottom: FOOTER_HEIGHT + 8,
     left: SIDE_WIDTH + 32,
     right: 32,
     alignItems: "center",
-    // backgroundColor: PINK80,
     borderRadius: 2,
     paddingVertical: 10,
     paddingHorizontal: 16,
     pointerEvents: "none",
+  },
+  bottomNavigationInner: {
     flexDirection: "row",
     justifyContent: "space-between",
+    width: "100%",
   },
   bottomNavigationLeft: {
     flexDirection: "row",
