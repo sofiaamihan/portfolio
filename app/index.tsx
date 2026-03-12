@@ -140,7 +140,12 @@ export default function Index() {
   const { width } = useWindowDimensions();
   const isWeb = Platform.OS === "web";
   const isDesktop = isWeb && width >= 768;
-  const isMobile = width < 740;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isMobile = mounted && width < 740;
   const sectionListRef = useRef<SectionList>(null);
   const [sideDimensions, setSideDimensions] = useState({ width: 0, height: 0 });
   const [activeSection, setActiveSection] = useState(0);
