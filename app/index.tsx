@@ -139,6 +139,33 @@ export default function Index() {
   };
 
   useEffect(() => {
+    if (!isWeb) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setActiveSection((prev) => {
+          const newSection = Math.max(0, prev - 1);
+          scrollToSection(newSection);
+          return newSection;
+        });
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setActiveSection((prev) => {
+          const newSection = Math.min(DATA.length - 1, prev + 1);
+          scrollToSection(newSection);
+          return newSection;
+        });
+      } else if (event.key === "Escape") {
+        scrollToSection(0);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
