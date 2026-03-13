@@ -11,7 +11,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "build:web": "expo export --platform web",
-    "predeploy": "npm run build:web && cp -r dist/assets/assets/* dist/assets/ && cp dist/index.html dist/404.html",
+    "predeploy": "npm run build:web && cp -r dist/assets/assets/* dist/assets/ && sed -i '' 's|/_expo/|/portfolio/_expo/|g' dist/index.html && sed -i '' 's|/_expo/|/portfolio/_expo/|g' dist/404.html && cp dist/index.html dist/404.html",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
