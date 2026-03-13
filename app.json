@@ -27,6 +27,7 @@
       "bundler": "metro",
       "baseUrl": "/portfolio"
     },
+    "assetBundlePatterns": ["**/*"],
     "plugins": [
       "expo-router",
       [

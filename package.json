@@ -10,7 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "build:web": "expo export --platform web",
-    "predeploy": "npm run build:web && cp dist/index.html dist/404.html",
+    "predeploy": "npm run build:web && cp -r dist/assets/assets/* dist/assets/ && cp dist/index.html dist/404.html",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
@@ -54,6 +54,7 @@
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "gh-pages": "^6.3.0",
+    "shx": "^0.4.0",
     "typescript": "~5.9.2"
   },
   "private": true
